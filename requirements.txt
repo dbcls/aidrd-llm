@@ -1,0 +1,11 @@
+requests
+pandas
+bs4
+playwright
+langchain==0.2.10
+langchain-openai==0.1.17
+langchain-community==0.2.9
+jinja2
+google-search-results
+faiss-cpu==1.8.0.post1
+python-dotenv
