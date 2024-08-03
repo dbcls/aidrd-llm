@@ -9,7 +9,7 @@ dotenv.load_dotenv()
 
 
 def query_to_api(query):
-    url = f"{os.environ.get('API_BASE_URL')}/v1/chat-messages"
+    url = f"{os.environ.get('API_BASE_URL')}/chat-messages"
     headers = {
         "Authorization": f"Bearer {os.environ.get('CHATBOT_API_KEY')}",
         "Content-Type": "application/json"
