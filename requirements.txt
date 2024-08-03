@@ -1,7 +1,6 @@
 requests
 pandas
 bs4
-playwright
 langchain==0.2.10
 langchain-openai==0.1.17
 langchain-community==0.2.9
