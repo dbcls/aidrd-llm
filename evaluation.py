@@ -32,6 +32,8 @@ def query_to_api(query):
     }
     response = requests.post(url, headers=headers, json=data).json()
     answer = response["answer"]
+    if "metadata" not in response or "retriever_resources" not in response["metadata"]:
+        return answer, []
     soucre_url_list = [resource["document_name"] for resource in response["metadata"]["retriever_resources"]]
     return answer, soucre_url_list
 
@@ -90,7 +92,7 @@ if __name__ == "__main__":
         evaluation_data = json.load(f)
 
     source_url_accuracy = {
-        "true_positive": 0,
+        "true_positive": 0, 
         "false_positive": 0,
         "false_negative": 0,
     }
@@ -141,8 +143,8 @@ if __name__ == "__main__":
         writer.writerow({
             "Number": total,
             "query": query,
-            "expected_source_urls": expected_source_url_list,
-            "actual_source_urls": actual_source_url_list,
+            "expected_source_urls": '\n'.join(expected_source_url_list),
+            "actual_source_urls": '\n'.join(actual_source_url_list),
             "source_urls_f1_score": source_f1_score,
             "expected_answer": expected_answer,
             "actual_answer": actual_answer,

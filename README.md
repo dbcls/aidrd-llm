@@ -20,6 +20,8 @@ docker-compose up -d
 ```
 API_BASE_URL=<YOUR_DIFY_BASE_URL>
 CHATBOT_API_KEY=<YOUR_CHATBOT_API_KEY>
+DIFY_USER=<DIFY_USER_NAME> # Just for logging purposes. Can be anything
+AZURE_DEPLOYMENT_ID=<YOUR_AZURE_DEPLOYMENT_ID> # The deployment id of your LLM model. This model evaluates the chatbot responses
 ```
 
 - Restart the container
@@ -34,3 +36,5 @@ docker-compose restart
 ```
 docker-compose exec app python evaluation.py
 ```
+
+- The evaluation results will be located in `evaluation_results_<timestamp>.json`
