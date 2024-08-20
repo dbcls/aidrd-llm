@@ -162,3 +162,5 @@ cython_debug/
 #.idea/
 
 downloaded_pdfs/
+evaluations/
+.DS_Store
