@@ -58,6 +58,13 @@ python upload_knowledge.py <CRAWLED_KNOWLEDGE_FILE> <KNOWLEDGE_BASE_NAME>
 python upload_knowledge.py tokyo.json tokyo-knowledges
 ```
 
+- At Dify 0.6.15, The created knowledge base has `only_me` visibility by default and visible only for the owner of Dify workspace.
+- If you cannot see the uploaded knowledge base, please execute the following SQL query to change the visibility.
+
+```sql
+UPDATE datasets set permission = 'all_team_members' WHERE name = '<KNOWLEDGE_BASE_NAME>';
+```
+
 ## Evaluation
 
 - To evaluate the accuracy of your Dify chatbot, update the `.env` file with the required values
