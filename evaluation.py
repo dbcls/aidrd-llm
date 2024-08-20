@@ -102,7 +102,7 @@ if __name__ == "__main__":
     # get current date and time for csv file name
     current_date_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-    csv_file = open(f"evaluation_results_{current_date_time}.csv", mode="w", newline="")
+    csv_file = open(f"evaluation_results_{current_date_time}.csv", mode="w", newline="", encoding="utf-8-sig")
     fieldnames = ["Number", "query", "expected_source_urls", "actual_source_urls", "source_urls_f1_score", "expected_answer", "actual_answer", "answer_similarity"]
     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
     writer.writeheader()
