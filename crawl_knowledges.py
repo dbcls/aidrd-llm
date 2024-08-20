@@ -2,7 +2,6 @@ import requests
 import json
 import argparse
 import os
-import uuid
 from datetime import datetime
 from time import sleep
 
@@ -26,8 +25,11 @@ def scrape_single_page(url, base_url = ''):
 
         
 
-def crawl_pages(start_url, max_page_count, max_depth):
-    endpoint = "http://127.0.0.1:3002/v0/crawl"
+def crawl_pages(start_url, max_page_count, max_depth, firecrawl_host):
+    if not firecrawl_host.endswith("/"):
+        endpoint = f"{firecrawl_host}/v0/crawl"
+    else:
+        endpoint = f"{firecrawl_host}v0/crawl"
     unique_id = datetime.now().strftime("%Y%m%d%H%M%S")
     pdf_download_dir = f"downloaded_pdfs/{unique_id}"
     os.makedirs(pdf_download_dir, exist_ok=True)
@@ -120,6 +122,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description="Crawl pages starting from a given URL.")
     parser.add_argument('start_url', type=str, help='The starting URL for the crawl')
     parser.add_argument('output_file', type=str, help='The output file to save the results')
+    parser.add_argument('--firecrawl-host', type=str, default='http://127.0.0.1:3002/', help='The Firecrawl endpoint to use')
     parser.add_argument('--max-page-count', type=int, default=100, help='The maximum number of pages to crawl (including files other than HTMLs)')
     parser.add_argument('--max-depth', type=int, default=5, help='The maximum depth to crawl')
     return parser.parse_args()
@@ -130,5 +133,5 @@ if __name__ == "__main__":
     output_file = args.output_file
 
     # Call the function to start crawling
-    result_json = crawl_pages(start_url, args.max_page_count, args.max_depth)
+    result_json = crawl_pages(start_url, args.max_page_count, args.max_depth, args.firecrawl_host)
     json.dump(result_json, open(output_file, 'w'), indent=2)

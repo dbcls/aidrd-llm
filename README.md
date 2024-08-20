@@ -13,6 +13,31 @@ cp .env.example .env
 docker-compose up -d
 ```
 
+## Crawl documents for knowledge base
+
+- To crawl the document for the knowledge base, prepare Firecrawl endpoint.
+
+  - Official: https://github.com/mendableai/firecrawl/blob/main/SELF_HOST.md
+  - Japanese blog: https://zenn.dev/kun432/scraps/58fce97899cfdd
+
+- Run the following command to crawl the documents.
+  - If you prepare the firecrawl endpoint other than `localhost:3002`, specify the endpoint by `--firecrawl-host` option.
+  - Note that you should execute this command outside the docker container to access the local firecrawl endpoint.
+
+```
+python crawl_knowledges.py <URL_TO_START_CRAWLING> <OUTPUT_FILE_NAME> --max-page-count <MAX_PAGE_COUNT> --max-depth <MAX_DEPTH>
+```
+
+- For example:
+
+```
+python crawl_knowledges.py "https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/" tokyo.json --max-page-count 1000 --max-depth 5
+```
+
+- The crawled documents will be saved in `tokyo.json` and PDFs are saved in `downloaded_pdfs` directory.
+
+## Upload knowledge base to Dify
+
 ## Evaluation
 
 - To evaluate the accuracy of your Dify chatbot, update the `.env` file with the required values
