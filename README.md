@@ -38,6 +38,26 @@ python crawl_knowledges.py "https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanby
 
 ## Upload knowledge base to Dify
 
+- To upload the knowledge base to Dify, update the `.env` file with the required values
+
+```
+KNOWLEDGE_API_KEY=<DIFY_KNOWLEDGE_API_KEY>
+API_BASE_URL=<DIFY_BASE_URL> # e.g. http://aidrd.japaneast.cloudapp.azure.com/v1
+```
+
+- Run the following command to upload the knowledge base to Dify
+  - Note that you should execute this command in the same directory as the crawled knowledge JSON file because the JSON file includes relative paths to the PDFs.
+
+```
+python upload_knowledge.py <CRAWLED_KNOWLEDGE_FILE> <KNOWLEDGE_BASE_NAME>
+```
+
+- For example:
+
+```
+python upload_knowledge.py tokyo.json tokyo-knowledges
+```
+
 ## Evaluation
 
 - To evaluate the accuracy of your Dify chatbot, update the `.env` file with the required values

@@ -124,7 +124,7 @@ if __name__ == "__main__":
     length = len(knowledge_json)
     existing_documents = get_existing_document_names(knowledge_base_id)
     queued_documents = []
-    MAX_QUEUED_DOCUMENTS = 1
+    MAX_QUEUED_DOCUMENTS = 1 # If you want to upload multiple documents at once, increase this number. But be careful, the server may not be able to handle too many requests at once.
     
     for document in knowledge_json:
         i += 1
