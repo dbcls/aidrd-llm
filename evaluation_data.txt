@@ -1,0 +1,143 @@
+想定されるQ&A
+
+- Q
+    - 消化器疾患の難病と診断されましたが，医療相談会はいつ開催されますか？また，その相談会の詳細な資料は存在しますか？
+- A
+    - 令和5年5月14日（日曜日）に開催
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/center/soudankai.html
+    - 詳細な資料：https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/center/soudankai.files/soudan050514.pdf
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/center/soudankai.html
+
+- Q
+    - パーキンソン病と診断されましたが，医療相談会はいつ開催されますか？また，その相談会の詳細な資料は存在しますか？
+- A
+    - 令和6年6月23日（日曜日）
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/center/soudankai.html
+    - 詳細な資料：https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/center/soudankai.files/R060623soudan2.pdf
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/center/soudankai.html
+
+- Q
+    - 難病のIgA腎症と診断されたのですが，専門の先生に相談できる機会はありますか？
+- A
+    - 令和6年7月21日（日曜日）
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/center/soudankai.html
+    - 専門医による無料相談会：https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/center/soudankai.files/R060721soudan.pdf
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/center/soudankai.html
+
+- Q
+    - MSAと診断されましたが，同じ疾患を持つ患者や家族の方と交流できる機会はありますか？
+- A
+    - 偶数月第4木曜日　午後1時30分から午後4時に脊髄小脳変性症（SCD）・多系統萎縮症（MSA）患者・家族交流会が開催されている
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/center/kouryuukai.html
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/center/kouryuukai.files/R6SCDMSA.pdf
+
+- Q
+    - ALS患者ですが，同じ悩みを持つ方と交流したいです．
+- A
+    - 奇数月第3金曜日　午後1時30分から午後4時に筋萎縮性側索硬化症（ＡＬＳ）患 者 ・家 族 交 流 会が開催されています．
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/center/kouryuukai.html
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/center/kouryuukai.files/R6ALS.pdf
+
+- Q
+    - 就労に関する悩みはどこで相談すれば良いですか？
+- A
+    - 東京都難病相談・支援センター（順天堂大学診療放射線学科実習棟内）と東京都多摩難病相談・支援室（都立神経病院内）で相談を受け付けています．
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/center/syuurou.html
+
+- Q
+    - 難病と指定された場合に，助成対象となる介護の内容は？
+- A
+    - 以下のサービスが対象となる
+            - 訪問看護
+            - 訪問リハビリテーション
+            - 居宅療養管理指導
+            - 介護予防訪問看護
+            - 介護予防訪問リハビリテーション
+            - 介護予防居宅療養管理指導
+            - 介護医療院サービス
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/seido/josei.html
+
+- Q
+    - 難病と指定された場合に，助成対象とはならない介護の内容は？
+- A
+    - 以下のサービスは対象外
+            - 認定された疾病（指定難病の場合は、当該疾病に付随して発症する傷病を含む。）以外の病気やけがによる医療費
+            - 医療保険が適用されない医療費（保険診療外の治療・調剤、差額ベッド代、個室料、入院時の食事等）
+            - 介護保険での訪問介護の費用
+            - 医療機関・施設までの交通費、移送費
+            - 補装具の作成費用や、はり、きゅう、あんま、マッサージの費用
+            - 認定申請時等に提出する臨床調査個人票（診断書）の作成費用
+            - 療養証明書の証明作成費用
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/seido/josei.html
+
+- Q
+    - 指定難病の認定を受けている場合，助成を受けられる指定医療機関はどこですか？
+- A
+    - 以下の病院・診療所・介護医療院
+            - 【区部】難病指定医療機関一覧（令和6年5月1日現在）（PDF：3,693KB）
+            - ファイルダウンロード　新規ウインドウで開きます。【市町村部】難病指定医療機関一覧（令和6年5月1日現在）（PDF：1,668KB）
+            - ファイルダウンロード　新規ウインドウで開きます。【区部】難病指定医療機関一覧（令和6年5月1日現在）（Excel：375KB）
+            - ファイルダウンロード　新規ウインドウで開きます。【市町村部】難病指定医療機関一覧（令和6年5月1日現在）（Excel：141KB）
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/shiteikikan/ichiran.html
+
+
+- Q
+    - 指定難病の認定を受けている場合，助成を受けられる指定薬局はどこですか？
+- A
+    - 以下の薬局
+            - 【区部】難病指定医療機関一覧（令和6年5月1日現在）（PDF：3,521KB）
+            - ファイルダウンロード　新規ウインドウで開きます。【市町村部】難病指定医療機関一覧（令和6年5月1日現在）（PDF：1,611KB）
+            - ファイルダウンロード　新規ウインドウで開きます。【区部】難病指定医療機関一覧（令和6年5月1日現在）（Excel：356KB）
+            - ファイルダウンロード　新規ウインドウで開きます。【市町村部】難病指定医療機関一覧（令和6年5月1日現在）（Excel：147KB）
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/shiteikikan/ichiran.html
+
+- Q
+    - 指定難病の認定を受けている場合，助成を受けられる訪問看護サービスはどこですか？
+- A
+    - 以下の訪問看護事業所等
+            - 難病指定医療機関一覧（令和6年5月1日現在）（PDF：1,243KB）
+            - ファイルダウンロード　新規ウインドウで開きます。難病指定医療機関一覧（令和6年5月1日現在）（Excel：128KB）
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/shiteikikan/ichiran.html
+
+- Q
+    - 足立区に住んでいますが，難病医療券の窓口はどこですか？
+- A
+    - 以下の窓口
+            - 足立区 衛生部 保健予防課 保健予防係　120-8510　足立区中央本町 1-17-1 (本庁舎南館2階)　3880-5892
+            - 江 北 保健センター　123-0845　 〃 西新井本町 2-30-40　3896-4004
+            - 千 住 保健センター　120-0036　 〃 千住仲町 19-3     (千住庁舎4階)　3888-4277
+            - 竹の塚 保健センター　121-0822　  〃 西竹の塚 1-11-2    エミエルタワー竹の塚2階　3855-5082
+            - 中央本町 地域・保健総合支援課　120-0011　 〃 中央本町 1-5-3 足立保健所内　3880-5351
+            - 東 部 保健センター　120-0001　 〃 大谷田 3-11-13(H27.7.21から一時移転)　3606-4171
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/seido/madoguchi.files/5.3madogutiitirann23ku.pdf
+
+- Q
+    - 指定難病ではなく，東京都が独自に指定する助成対象の疾患を教えてください
+- A
+    - 以下の８疾患です
+            - 都80 原発性骨髄線維症
+            - 都88 古典的特発性好酸球増多症候群
+            - 都77 悪性高血圧
+            - 都91 びまん性汎細気管支炎
+            - 都83　母斑症（指定難病の結節性硬化症、スタージ・ウェーバー症候群及びクリッペル・トレノネー・ウェーバー症候群を除く。）
+            - 都95 遺伝性ＱＴ延長症候群
+            - 都866 肝内結石症
+            - 都97 網膜脈絡膜萎縮症
+        - 根拠となるURL
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/shikkan/taishou.files/totan3001.pdf
+            - https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/shikkan/taishou.html
