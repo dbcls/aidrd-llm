@@ -1,0 +1,46 @@
+.documentList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.documentList li {
+  position: relative;
+  padding-left: 12px;
+  margin-bottom: 2px;
+}
+
+.documentList li a {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.documentList li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background-color: rgba(72, 167, 255, 1);
+  border-radius: 50%;
+}
+
+.headerWithBorder {
+  padding-left: 14px;
+  font-size: 21px;
+  font-weight: bolder;
+  position: relative;
+}
+
+.headerWithBorder::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 80%;
+  background-color: #2250F2;
+  border-radius: 9999px;
+  position: absolute;
+  top: 10%;
+  left: 0;
+}
