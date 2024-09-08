@@ -52,6 +52,7 @@ const Chat: FC<IChatProps> = ({
   const { t } = useTranslation()
   const { notify } = Toast
   const isUseInputMethod = useRef(false)
+  let enterKeyForIME = false;
 
   const [query, setQuery] = React.useState('')
   const handleContentChange = (e: any) => {
@@ -106,14 +107,18 @@ const Chat: FC<IChatProps> = ({
     if (e.code === 'Enter') {
       e.preventDefault()
       // prevent send message when using input method enter
-      if (!e.shiftKey && !isUseInputMethod.current)
+      if (!e.shiftKey && !isUseInputMethod.current && !enterKeyForIME) {
         handleSend()
+      }
+      enterKeyForIME = false
     }
   }
 
   const handleKeyDown = (e: any) => {
     isUseInputMethod.current = e.nativeEvent.isComposing
     if (e.code === 'Enter' && !e.shiftKey) {
+      if (e.keyCode === 229) // ignore IME input
+        enterKeyForIME = true
       setQuery(query.replace(/\n$/, ''))
       e.preventDefault()
     }
