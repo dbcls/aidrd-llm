@@ -24,6 +24,7 @@ function addTextFragments(baseUrl: string, content: string) {
         return baseUrl
     }
     let fragments = content.split(/ |\n/)
+    fragments = fragments.map(f => f.replaceAll('-', '')) // Safariではハイフンが含まれるとリンクが正しく動作しないようなので削除する
     fragments = fragments.filter(f => f.length > 0)
     let urlWithTextFragments = `${baseUrl}#:~:text=${fragments.join('&text=')}`
     const MAX_URL_LENGTH = 4096
