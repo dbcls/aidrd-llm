@@ -17,7 +17,7 @@ dotenv.load_dotenv()
 
 headers = {
     "Authorization": f"Bearer {os.environ.get('KNOWLEDGE_API_KEY')}",
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
 }
 
 
@@ -45,6 +45,7 @@ def create_knowledge_base(knowledge_base_name):
     response = requests.post(url, headers=headers, json=data).json()
     return response["id"]
 
+
 def get_existing_document_names(knowledge_base_id):
     page = 1
     url = f"{os.environ.get('API_BASE_URL')}/datasets/{knowledge_base_id}/documents?limit=100"
@@ -57,32 +58,46 @@ def get_existing_document_names(knowledge_base_id):
     return document_names
 
 
-def add_document_to_knowledge_base(knowledge_base_id, document, indexing_technique, process_rule):
+def add_document_to_knowledge_base(
+    knowledge_base_id, document, indexing_technique, process_rule
+):
     url = f"{os.environ.get('API_BASE_URL')}/datasets/{knowledge_base_id}/document/create_by_file"
 
     headers_for_add = {
         "Authorization": f"Bearer {os.environ.get('KNOWLEDGE_API_KEY')}",
     }
 
-    data = {
-        "indexing_technique": indexing_technique,
-        "process_rule": process_rule
-    }
+    data = {"indexing_technique": indexing_technique, "process_rule": process_rule}
 
     file_url = document["metadata"]["sourceURL"]
 
     if "filePath" in document["metadata"]:
         document_content = open(document["metadata"]["filePath"], "rb")
+        upload_content = (file_url, document_content)
     else:
         document_content = BytesIO(document["content"].encode())
+        upload_content = (file_url, document_content, "text/plain")
+        if not file_url.endswith(".html") and not file_url.endswith(".txt"):
+            # 一旦 ".html"を付加してアップロードしておき、後からDB上で変更する
+            upload_content = (
+                file_url + ".added_on_upload.html",
+                document_content,
+                "text/plain",
+            )
 
     files = {
-        "file": (file_url, document_content),
-        "data": (None, json.dumps(data), "text/plain")
+        "file": upload_content,
+        "data": (None, json.dumps(data), "text/plain"),
     }
-    response = requests.post(url, headers=headers_for_add, files=files, data=data).json()
+    response = requests.post(
+        url, headers=headers_for_add, files=files, data=data
+    ).json()
     print(response)
+    if "batch" not in response:
+        print(f"Failed to add document: {response}")
+        raise Exception("Failed to add document")
     return response["batch"]
+
 
 def check_if_embedding_is_in_progress(knowledge_base_id, batch_id):
     url = f"{os.environ.get('API_BASE_URL')}/datasets/{knowledge_base_id}/documents/{batch_id}/indexing-status"
@@ -92,15 +107,50 @@ def check_if_embedding_is_in_progress(knowledge_base_id, batch_id):
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description="Crawl pages starting from a given URL.")
-    parser.add_argument('knowledge_file', type=str, help='The JSON file containing the knowledge to upload')
-    parser.add_argument('knowledge_base_name', type=str, help='The name of the knowledge base to be created')
-    parser.add_argument('--indexing-technique', type=str, default="high_quality", help='The indexing technique to be used. high_quality or economy')
-    parser.add_argument('--processing-mode', type=str, default="automatic", help='The processing mode to be used. automatic or custom')
-    parser.add_argument('--segment-separator', type=str, default="\n", help='The segment separator to be used. Only used if processing mode is custom.')
-    parser.add_argument('--segment-max-tokens', type=int, default=1000, help='The maximum number of tokens per segment. Only used if processing mode is custom.')
-    parser.add_argument('--remove-extra-spaces', action="store_true", help='Remove extra spaces. Only used if processing mode is custom.')
+    parser = argparse.ArgumentParser(
+        description="Crawl pages starting from a given URL."
+    )
+    parser.add_argument(
+        "knowledge_file",
+        type=str,
+        help="The JSON file containing the knowledge to upload",
+    )
+    parser.add_argument(
+        "knowledge_base_name",
+        type=str,
+        help="The name of the knowledge base to be created",
+    )
+    parser.add_argument(
+        "--indexing-technique",
+        type=str,
+        default="high_quality",
+        help="The indexing technique to be used. high_quality or economy",
+    )
+    parser.add_argument(
+        "--processing-mode",
+        type=str,
+        default="automatic",
+        help="The processing mode to be used. automatic or custom",
+    )
+    parser.add_argument(
+        "--segment-separator",
+        type=str,
+        default="\n",
+        help="The segment separator to be used. Only used if processing mode is custom.",
+    )
+    parser.add_argument(
+        "--segment-max-tokens",
+        type=int,
+        default=1000,
+        help="The maximum number of tokens per segment. Only used if processing mode is custom.",
+    )
+    parser.add_argument(
+        "--remove-extra-spaces",
+        action="store_true",
+        help="Remove extra spaces. Only used if processing mode is custom.",
+    )
     return parser.parse_args()
+
 
 if __name__ == "__main__":
     args = parse_arguments()
@@ -109,37 +159,47 @@ if __name__ == "__main__":
     if knowledge_base_id is None:
         knowledge_base_id = create_knowledge_base(args.knowledge_base_name)
 
-    process_rule = {
-        "mode": args.processing_mode
-    }
+    process_rule = {"mode": args.processing_mode}
     if args.processing_mode == "custom":
         rules = {}
         rules["segmentation"] = {}
         rules["segmentation"]["separator"] = args.segment_separator
         rules["segmentation"]["max_tokens"] = args.segment_max_tokens
         if args.remove_extra_spaces:
-            rules["pre_processing_rules"] = [{"id": "remove_extra_spaces", "enabled": True}]
+            rules["pre_processing_rules"] = [
+                {"id": "remove_extra_spaces", "enabled": True}
+            ]
         process_rule["rules"] = rules
     i = 0
     length = len(knowledge_json)
     existing_documents = get_existing_document_names(knowledge_base_id)
     queued_documents = []
-    MAX_QUEUED_DOCUMENTS = 1 # If you want to upload multiple documents at once, increase this number. But be careful, the server may not be able to handle too many requests at once.
-    
+    MAX_QUEUED_DOCUMENTS = 3  # If you want to upload multiple documents at once, increase this number. But be careful, the server may not be able to handle too many requests at once.
+
     for document in knowledge_json:
         i += 1
+        if document is None or "metadata" not in document:
+            print(f"Document {i} / {length} has no metadata. Skipping.")
+            continue
+        if i >= 400:
+            # サーバ側の負荷の問題で、今回は最大数を400に制限する
+            break
+
         document_name = document["metadata"]["sourceURL"]
         if document_name in existing_documents:
             print(f"Document {i} / {length}: {document_name} already exists. Skipping.")
             continue
         print(f"Adding document {i} / {length}: {document_name}")
-        queued_documents.append(add_document_to_knowledge_base(knowledge_base_id, document, args.indexing_technique, process_rule))
+        queued_documents.append(
+            add_document_to_knowledge_base(
+                knowledge_base_id, document, args.indexing_technique, process_rule
+            )
+        )
         while len(queued_documents) >= MAX_QUEUED_DOCUMENTS:
             print("Waiting for documents to be indexed...")
             sleep(1)
             for batch_id in queued_documents:
                 if not check_if_embedding_is_in_progress(knowledge_base_id, batch_id):
                     queued_documents.remove(batch_id)
-                    break              
-        sleep(10)
-    
+                    break
+        sleep(1)
