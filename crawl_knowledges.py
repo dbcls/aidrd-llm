@@ -2,52 +2,61 @@ import requests
 import json
 import argparse
 import os
+import traceback
 from datetime import datetime
 from time import sleep
 
-headers = {'Content-Type': 'application/json'}
+headers = {"Content-Type": "application/json"}
 
 
-def scrape_single_page(url, base_url = ''):
+def scrape_single_page(url, base_url=""):
     # Define the payload
-    response = requests.get(url)
-    if response.status_code != 200 and base_url != '':
-        # Firecrawlが返してくるlinksOnPageは、
-        # 例えば"https://www.example.com/page.html" の中に
-        # "a/b.pdf" というリンクがある場合、
-        # "https://www.example.com/page.html/a/b.pdf" という形で返ってくる。
-        # これは正しくない場合があり、"https://www.example.com/a/b.pdf" という形に修正する必要があるため、base_urlを使って修正してリトライする。
-        base_url_without_last_segment = '/'.join(base_url.split('/')[:-1])
-        retry_url = base_url_without_last_segment + url.replace(base_url, '')
-        print("Trial failed. Retrying with the corrected URL:", retry_url)
-        return scrape_single_page(retry_url)
+    try:
+        response = requests.get(url, timeout=(10, 30))
+        if response.status_code != 200 and base_url != "":
+            # Firecrawlが返してくるlinksOnPageは、
+            # 例えば"https://www.example.com/page.html" の中に
+            # "a/b.pdf" というリンクがある場合、
+            # "https://www.example.com/page.html/a/b.pdf" という形で返ってくる。
+            # これは正しくない場合があり、"https://www.example.com/a/b.pdf" という形に修正する必要があるため、base_urlを使って修正してリトライする。
+            base_url_without_last_segment = "/".join(base_url.split("/")[:-1])
+            retry_url = base_url_without_last_segment + url.replace(base_url, "")
+            print("Trial failed. Retrying with the corrected URL:", retry_url)
+            return scrape_single_page(retry_url)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None, None
     return response, url
 
-        
 
-def crawl_pages(start_url, max_page_count, max_depth, firecrawl_host):
+def crawl_pages(
+    start_url, max_page_count, max_depth, firecrawl_host, allow_backward_crawling
+):
     if not firecrawl_host.endswith("/"):
         endpoint = f"{firecrawl_host}/v0/crawl"
     else:
         endpoint = f"{firecrawl_host}v0/crawl"
     unique_id = datetime.now().strftime("%Y%m%d%H%M%S")
-    pdf_download_dir = f"downloaded_pdfs/{unique_id}"
-    os.makedirs(pdf_download_dir, exist_ok=True)
-    pdf_download_count = 0    
+    file_download_dir = f"downloaded_files/{unique_id}"
+    os.makedirs(file_download_dir, exist_ok=True)
+    file_download_count = 0
     try:
         # Define the payload
         payload = {
             "url": start_url,
+            "limit": max_page_count,
             "crawlerOptions": {
                 "limit": max_page_count,
                 "maxDepth": max_depth,
+                "allowBackwardCrawling": allow_backward_crawling,
+                "excludes": [".*\.pdf$", ".*\.docx$", ".*\.xlsx$", ".*\.xls$"],
             },
             "pageOptions": {
-                "onlyMainContent": True,                
-            }
+                "replaceAllPathsWithAbsolutePaths": True,
+            },
         }
         print(payload)
-        
+
         # Send the POST request
         response = requests.post(endpoint, headers=headers, data=json.dumps(payload))
         result = None
@@ -63,13 +72,25 @@ def crawl_pages(start_url, max_page_count, max_depth, firecrawl_host):
                 if response.status_code == 200:
                     status = response.json()
                     if status["status"] == "completed":
-                        print("Crawling completed.")
+                        print(
+                            f"Crawling completed : {status['current']} / {status['total']}"
+                        )
                         result_for_html = status["data"]
                         if len(result_for_html) < max_page_count:
-                            traversed_urls = [page["metadata"]["sourceURL"] for page in result_for_html]
+                            traversed_urls = [
+                                page["metadata"]["sourceURL"]
+                                for page in result_for_html
+                                if page
+                                and "metadata" in page
+                                and "sourceURL" in page["metadata"]
+                            ]
                             traversed_urls = set(traversed_urls)
-                            # Scrape PDF files
-                            for page in result_for_html:
+                            base_url_list = result_for_html.copy()
+                            # Scrape files other than HTMLs
+                            for i, page in enumerate(base_url_list):
+                                print(
+                                    f"Scraping files from page {i+1} / {len(base_url_list)}"
+                                )
                                 if "linksOnPage" not in page:
                                     continue
                                 for link in page["linksOnPage"]:
@@ -77,25 +98,47 @@ def crawl_pages(start_url, max_page_count, max_depth, firecrawl_host):
                                         break
                                     if link in traversed_urls:
                                         continue
-                                    if link.lower().endswith(".pdf"):
-                                        pdf_url = link
-                                        print(f"Scraping PDF file: {pdf_url}")
-                                        response, pdf_url = scrape_single_page(pdf_url, base_url=page["metadata"]["sourceURL"])
-                                        if response.status_code == 200:
-                                            pdf_download_count += 1
-                                            pdf_file_name = f"{pdf_download_count}_{pdf_url.split('/')[-1]}"
-                                            pdf_file_path = os.path.join(pdf_download_dir, pdf_file_name)
-                                            print(f"Saving PDF file to: {pdf_file_path}")
-                                            with open(pdf_file_path, 'wb') as f:
+                                    target_extensions = ["pdf", "docx", "xlsx", "xls"]
+                                    if any(
+                                        [
+                                            link.lower().endswith(ext)
+                                            for ext in target_extensions
+                                        ]
+                                    ):
+                                        file_url = link
+                                        print(f"Scraping file: {file_url}")
+                                        response, file_url = scrape_single_page(
+                                            file_url,
+                                            base_url=page["metadata"]["sourceURL"],
+                                        )
+                                        if response is None:
+                                            print("Failed to scrape the file.")
+                                        else:
+                                            print(
+                                                f"Response status code: {response.status_code}"
+                                            )
+                                        if (
+                                            response is not None
+                                            and response.status_code == 200
+                                        ):
+                                            file_download_count += 1
+                                            file_name = f"{file_download_count}_{file_url.split('/')[-1]}"
+                                            file_path = os.path.join(
+                                                file_download_dir, file_name
+                                            )
+                                            print(f"Saving file to: {file_path}")
+                                            with open(file_path, "wb") as f:
                                                 f.write(response.content)
-                                            result_for_html.append({
-                                                "content": None,
-                                                "provider": "simple-download",
-                                                "metadata": {
-                                                    "sourceURL": pdf_url,
-                                                    "filePath": pdf_file_path
+                                            result_for_html.append(
+                                                {
+                                                    "content": None,
+                                                    "provider": "simple-download",
+                                                    "metadata": {
+                                                        "sourceURL": file_url,
+                                                        "filePath": file_path,
+                                                    },
                                                 }
-                                            })
+                                            )
                                     traversed_urls.add(link)
                                 if len(result_for_html) >= max_page_count:
                                     break
@@ -105,9 +148,14 @@ def crawl_pages(start_url, max_page_count, max_depth, firecrawl_host):
                         print("Crawling failed.")
                         return {}
                     else:
-                        print(f"Current progres: {status['current']} / {status['total']}")
+                        if "current" in status and "total" in status:
+                            print(
+                                f"Current progres: {status['current']} / {status['total']}"
+                            )
                 else:
-                    print(f"Failed to get job status. Status code: {response.status_code}")
+                    print(
+                        f"Failed to get job status. Status code: {response.status_code}"
+                    )
                     return {}
 
         else:
@@ -115,17 +163,40 @@ def crawl_pages(start_url, max_page_count, max_depth, firecrawl_host):
             print("Response:", response.text)
             return {}
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred: {e}\n{traceback.format_exc()}")
         return {}
 
+
 def parse_arguments():
-    parser = argparse.ArgumentParser(description="Crawl pages starting from a given URL.")
-    parser.add_argument('start_url', type=str, help='The starting URL for the crawl')
-    parser.add_argument('output_file', type=str, help='The output file to save the results')
-    parser.add_argument('--firecrawl-host', type=str, default='http://127.0.0.1:3002/', help='The Firecrawl endpoint to use')
-    parser.add_argument('--max-page-count', type=int, default=100, help='The maximum number of pages to crawl (including files other than HTMLs)')
-    parser.add_argument('--max-depth', type=int, default=5, help='The maximum depth to crawl')
+    parser = argparse.ArgumentParser(
+        description="Crawl pages starting from a given URL."
+    )
+    parser.add_argument("start_url", type=str, help="The starting URL for the crawl")
+    parser.add_argument(
+        "output_file", type=str, help="The output file to save the results"
+    )
+    parser.add_argument(
+        "--firecrawl-host",
+        type=str,
+        default="http://127.0.0.1:3002/",
+        help="The Firecrawl endpoint to use",
+    )
+    parser.add_argument(
+        "--max-page-count",
+        type=int,
+        default=100,
+        help="The maximum number of pages to crawl (including files other than HTML)",
+    )
+    parser.add_argument(
+        "--max-depth", type=int, default=5, help="The maximum depth to crawl"
+    )
+    parser.add_argument(
+        "--allow-backward-crawling",
+        action="store_true",
+        help="Allow external content links",
+    )
     return parser.parse_args()
+
 
 if __name__ == "__main__":
     args = parse_arguments()
@@ -133,5 +204,16 @@ if __name__ == "__main__":
     output_file = args.output_file
 
     # Call the function to start crawling
-    result_json = crawl_pages(start_url, args.max_page_count, args.max_depth, args.firecrawl_host)
-    json.dump(result_json, open(output_file, 'w'), indent=2)
+    result_json = crawl_pages(
+        start_url,
+        args.max_page_count,
+        args.max_depth,
+        args.firecrawl_host,
+        args.allow_backward_crawling,
+    )
+
+    # If the directory does not exist, create it
+    dir_name = os.path.dirname(output_file)
+    if dir_name != "":
+        os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    json.dump(result_json, open(output_file, "w"), indent=2)
