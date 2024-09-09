@@ -15,10 +15,24 @@ docker-compose up -d
 
 ## Crawl documents for knowledge base
 
-- To crawl the document for the knowledge base, prepare Firecrawl endpoint.
+- To crawl the document for the knowledge base, prepare Firecrawl endpoint by self-hosting or using the public endpoint.
+  - For self-hosting, please refer to the following links:
+    - Official: https://github.com/mendableai/firecrawl/blob/main/SELF_HOST.md
+    - Japanese blog: https://zenn.dev/kun432/scraps/58fce97899cfdd
+  - After deployment, please change the following line in `docker-compose.yml` to deploy the worker service in production mode.
+    - This setting is important because the worker service in develogment mode does not automatically restart when app crashes by error.
 
-  - Official: https://github.com/mendableai/firecrawl/blob/main/SELF_HOST.md
-  - Japanese blog: https://zenn.dev/kun432/scraps/58fce97899cfdd
+```
+  worker:
+    <<: *common-service
+    depends_on:
+      - redis
+      - playwright-service
+      - api
+#    command: [ "pnpm", "run", "workers" ] # Original setting for development
+    command: [ "pnpm", "run", "worker:production" ] # Modified setting for production
+    restart: unless-stopped                # Add this line
+```
 
 - Run the following command to crawl the documents.
   - If you prepare the firecrawl endpoint other than `localhost:3002`, specify the endpoint by `--firecrawl-host` option.
@@ -46,7 +60,7 @@ API_BASE_URL=<DIFY_BASE_URL> # e.g. http://aidrd.japaneast.cloudapp.azure.com/v1
 ```
 
 - Run the following command to upload the knowledge base to Dify
-  - Note that you should execute this command in the same directory as the crawled knowledge JSON file because the JSON file includes relative paths to the PDFs.
+  - Note that you should execute this command in the root directory of this project because the JSON file includes relative paths to the PDFs.
 
 ```
 python upload_knowledge.py <CRAWLED_KNOWLEDGE_FILE> <KNOWLEDGE_BASE_NAME>
@@ -90,3 +104,8 @@ docker-compose exec app python evaluation.py
 ```
 
 - The evaluation results will be located in `evaluation_results_<timestamp>.json`
+
+## Known problems and solutions
+
+- Firecrawl sometimes crashes and crawling stops. In this case, you can restart the crawling by restarting firecrawl containers and executing the script again.
+- Weaviate in Dify sometimes refuse the connetcion. In this case, you can restart the weaviate container and execute the script again.
