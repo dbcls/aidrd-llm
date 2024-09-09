@@ -161,6 +161,8 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+crawled_knowledges/
+downloaded_files/
 downloaded_pdfs/
 evaluations/
 .DS_Store
