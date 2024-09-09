@@ -11,8 +11,6 @@ import os
 import argparse
 from time import sleep
 
-# TODO: アップロードしたナレッジのパーミッションが only_me になってしまい、DBを直接変更しない限り確認できないように見受けられる（APIが無い？）
-
 dotenv.load_dotenv()
 
 headers = {

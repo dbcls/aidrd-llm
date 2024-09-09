@@ -19,6 +19,7 @@ docker-compose up -d
   - For self-hosting, please refer to the following links:
     - Official: https://github.com/mendableai/firecrawl/blob/main/SELF_HOST.md
     - Japanese blog: https://zenn.dev/kun432/scraps/58fce97899cfdd
+  - We confirmed the crawling with the revision `fc08ff450da50eb436d9dfd4a09ac741fd8fbb84` of Firecrawl and other revision may not work correctly.
   - After deployment, please change the following line in `docker-compose.yml` to deploy the worker service in production mode.
     - This setting is important because the worker service in develogment mode does not automatically restart when app crashes by error.
 
@@ -50,26 +51,53 @@ python crawl_knowledges.py "https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanby
 
 - The crawled documents will be saved in `tokyo.json` and PDFs are saved in `downloaded_pdfs` directory.
 
+If you want to crawl all prefectures at once, you can use the following command:
+
+```
+python crawl_all_prefectures.py
+```
+
 ## Upload knowledge base to Dify
 
 - To upload the knowledge base to Dify, update the `.env` file with the required values
 
 ```
+
 KNOWLEDGE_API_KEY=<DIFY_KNOWLEDGE_API_KEY>
 API_BASE_URL=<DIFY_BASE_URL> # e.g. http://aidrd.japaneast.cloudapp.azure.com/v1
+
 ```
 
 - Run the following command to upload the knowledge base to Dify
   - Note that you should execute this command in the root directory of this project because the JSON file includes relative paths to the PDFs.
 
 ```
+
 python upload_knowledge.py <CRAWLED_KNOWLEDGE_FILE> <KNOWLEDGE_BASE_NAME>
+
 ```
 
 - For example:
 
 ```
+
 python upload_knowledge.py tokyo.json tokyo-knowledges
+
+```
+
+- If you want to upload all prefectures at once, you can use the following command:
+
+```
+python upload_all_prefectures.py
+```
+
+- After upload, please execute the following SQL query to remove the suffix `.added_on_upload.html` from the document names.
+- This process is necessary because the URL without extension like 'http://example.com/?id=123' is not accepted by Dify and the suffix ".added_on_upload.html" is added to the document names.
+
+```sql
+UPDATE documents
+SET name = LEFT(name, LENGTH(name) - LENGTH('.added_on_upload.html'))
+WHERE name LIKE '%.added_on_upload.html';
 ```
 
 - At Dify 0.6.15, The created knowledge base has `only_me` visibility by default and visible only for the owner of Dify workspace.
