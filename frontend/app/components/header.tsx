@@ -63,7 +63,7 @@ const Header: FC<IHeaderProps> = ({
           </Button>
 
         )}
-        <a data-tooltip-id='documents-tip' className="inline-flex items-center content-center px-4" href="/documents">
+        <a data-tooltip-id='documents-tip' className="inline-flex items-center content-center px-4 mt-5" href="/documents">
           <img src="/icons/documents.png" style={{ height: "18px" }} ></img>
           <SimpleTooltip
             selector='documents-tip'
