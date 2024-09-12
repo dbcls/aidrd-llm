@@ -35,6 +35,8 @@ docker compose up -d
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+### Deployment for Production (Optional)
+
 * For production deployment, please switch the following lines in `docker-compose.yåml` file.
 
 ```yaml
