@@ -13,7 +13,8 @@ services:
       - type: volume
         source: node_modules
         target: /app/node_modules
-    command: npm run dev
+    command: npm run dev                              # for development
+    # command: sh -c "npm run build && npm run start" # for production
 
 volumes:
   node_modules:

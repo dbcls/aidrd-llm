@@ -34,3 +34,10 @@ docker compose up -d
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+* For production deployment, please switch the following lines in `docker-compose.yåml` file.
+
+```yaml
+    # command: npm run dev                              # for development
+    command: sh -c "npm run build && npm run start" # for production
+```
