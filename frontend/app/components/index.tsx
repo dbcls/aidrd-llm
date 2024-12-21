@@ -238,6 +238,7 @@ const Main: FC = () => {
           setAppUnavailable(true)
         }
         else {
+          console.error(e)
           setIsUnknownReason(true)
           setAppUnavailable(true)
         }
