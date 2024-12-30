@@ -78,7 +78,7 @@ const Citation: FC<CitationProps> = ({
                                 class={`${s.citationLink}` + " block rounded-full bg-white my-2 py-1 px-3"}
 
                                 href={res.urlWithTextFragments || res.documentName} target="_blank">
-                                {res.documentName}
+                                [{index + 1}] {res.documentName}
                             </a>
                         ))
                     }

@@ -3,6 +3,7 @@ import type { FC } from 'react'
 import React from 'react'
 import { HandThumbDownIcon, HandThumbUpIcon } from '@heroicons/react/24/outline'
 import { useTranslation } from 'react-i18next'
+import { parse } from 'best-effort-json-parser'
 import LoadingAnim from '../loading-anim'
 import type { FeedbackFunc } from '../type'
 import s from '../style.module.css'
@@ -71,7 +72,22 @@ const Answer: FC<IAnswerProps> = ({
   isResponding,
   allToolIcons,
 }) => {
-  const { id, content, feedback, citation, agent_thoughts, workflowProcess } = item
+  let { id, content, feedback, citation, agent_thoughts, workflowProcess } = item
+  try {
+    let structuredContent = parse(content)
+    content = structuredContent.answer
+    let citationPlaces = structuredContent.citations
+    citationPlaces.sort((a: any, b: any) => b.substring_in_the_answer.length - a.substring_in_the_answer.length);  
+    citationPlaces.forEach(({ knowledge_index, substring_in_the_answer }) => {
+      const URL = citation[knowledge_index]?.document_name;
+      if(URL) {
+        const hyperlink = `[${substring_in_the_answer}[${parseInt(knowledge_index) + 1}]](${URL})`;
+        content = content.replace(substring_in_the_answer, hyperlink);
+      }
+    });
+  } catch (e) {
+    console.log(e);
+  }
   const isAgentMode = !!agent_thoughts && agent_thoughts.length > 0
 
   const { t } = useTranslation()
