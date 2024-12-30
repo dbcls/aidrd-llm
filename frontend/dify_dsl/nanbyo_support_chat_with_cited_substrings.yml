@@ -1,0 +1,3537 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: advanced-chat
+  name: 難病サポートチャット_根拠箇所表示追加_回答生成と根拠同時版
+  use_icon_as_answer_icon: false
+kind: app
+version: 0.1.4
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: こんにちは！難病支援制度について何かお困りですか？
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        sourceType: start
+        targetType: if-else
+      id: start-source-1724295933322-target
+      source: start
+      sourceHandle: source
+      target: '1724295933322'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-true-knowledge_retrieval-target
+      source: '1724295933322'
+      sourceHandle: 'true'
+      target: knowledge_retrieval
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1724295994956-source-1724296066993-target
+      source: '1724295994956'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: knowledge_retrieval-source-1724296066993-target
+      source: knowledge_retrieval
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-a4c181e6-6fcd-446d-9590-8c9eb3caf18f-1724295994956-target
+      source: '1724295933322'
+      sourceHandle: a4c181e6-6fcd-446d-9590-8c9eb3caf18f
+      target: '1724295994956'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-67cec2bb-0e30-4bf4-a3fd-088c92af4071-1724828830968-target
+      source: '1724295933322'
+      sourceHandle: 67cec2bb-0e30-4bf4-a3fd-088c92af4071
+      target: '1724828830968'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-b6acc5f8-62e5-4b87-9c79-821a036393f5-1724828868242-target
+      source: '1724295933322'
+      sourceHandle: b6acc5f8-62e5-4b87-9c79-821a036393f5
+      target: '1724828868242'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-c856f9df-bef7-4a65-89f5-43fb708bdfec-1724828894466-target
+      source: '1724295933322'
+      sourceHandle: c856f9df-bef7-4a65-89f5-43fb708bdfec
+      target: '1724828894466'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-04ae8061-21bc-4a63-aa22-9a2de2318c07-1724828915764-target
+      source: '1724295933322'
+      sourceHandle: 04ae8061-21bc-4a63-aa22-9a2de2318c07
+      target: '1724828915764'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-5ca1f550-e06a-4537-8fa5-795346db1269-1724828935601-target
+      source: '1724295933322'
+      sourceHandle: 5ca1f550-e06a-4537-8fa5-795346db1269
+      target: '1724828935601'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-338c1a44-f547-4213-bdee-220f66557b1e-1724828958836-target
+      source: '1724295933322'
+      sourceHandle: 338c1a44-f547-4213-bdee-220f66557b1e
+      target: '1724828958836'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1724828830968-source-1724296066993-target
+      source: '1724828830968'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1724828868242-source-1724296066993-target
+      source: '1724828868242'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1724828894466-source-1724296066993-target
+      source: '1724828894466'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1724828915764-source-1724296066993-target
+      source: '1724828915764'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1724828935601-source-1724296066993-target
+      source: '1724828935601'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1724828958836-source-1724296066993-target
+      source: '1724828958836'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-9098e17b-03a0-460c-b481-5563af5166a3-1725447273187-target
+      source: '1724295933322'
+      sourceHandle: 9098e17b-03a0-460c-b481-5563af5166a3
+      target: '1725447273187'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447273187-source-1724296066993-target
+      source: '1725447273187'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-e7023d24-1cdf-49ff-817e-2282796eb58c-1725447344618-target
+      source: '1724295933322'
+      sourceHandle: e7023d24-1cdf-49ff-817e-2282796eb58c
+      target: '1725447344618'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-ff8fc8f6-95e7-4fc3-9414-94ea93ca45b4-1725447392498-target
+      source: '1724295933322'
+      sourceHandle: ff8fc8f6-95e7-4fc3-9414-94ea93ca45b4
+      target: '1725447392498'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-fafc286a-492c-4212-aea5-9c435be75fbf-1725447415391-target
+      source: '1724295933322'
+      sourceHandle: fafc286a-492c-4212-aea5-9c435be75fbf
+      target: '1725447415391'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-1b19da81-8a02-4c1c-806a-27bec15efefd-1725447446212-target
+      source: '1724295933322'
+      sourceHandle: 1b19da81-8a02-4c1c-806a-27bec15efefd
+      target: '1725447446212'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-9cb5ff56-f925-4c03-94c6-a18960ada96f-1725447469989-target
+      source: '1724295933322'
+      sourceHandle: 9cb5ff56-f925-4c03-94c6-a18960ada96f
+      target: '1725447469989'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-0aab4064-c5f1-4ccc-9068-2393f0740f48-1725447486300-target
+      source: '1724295933322'
+      sourceHandle: 0aab4064-c5f1-4ccc-9068-2393f0740f48
+      target: '1725447486300'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-988443ec-aa61-4aad-8397-833458fa1b4b-1725447496945-target
+      source: '1724295933322'
+      sourceHandle: 988443ec-aa61-4aad-8397-833458fa1b4b
+      target: '1725447496945'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447496945-source-1724296066993-target
+      source: '1725447496945'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447486300-source-1724296066993-target
+      source: '1725447486300'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447344618-source-1724296066993-target
+      source: '1725447344618'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447392498-source-1724296066993-target
+      source: '1725447392498'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447415391-source-1724296066993-target
+      source: '1725447415391'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447446212-source-1724296066993-target
+      source: '1725447446212'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447469989-source-1724296066993-target
+      source: '1725447469989'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-023153d0-4c9d-4593-b4b1-446f3ed8f866-1725447559189-target
+      source: '1724295933322'
+      sourceHandle: 023153d0-4c9d-4593-b4b1-446f3ed8f866
+      target: '1725447559189'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-d997571e-9b88-431a-a24a-5df70dfea84b-1725447579442-target
+      source: '1724295933322'
+      sourceHandle: d997571e-9b88-431a-a24a-5df70dfea84b
+      target: '1725447579442'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-84041a86-a0db-45d0-a901-31215c5a5a96-1725447590609-target
+      source: '1724295933322'
+      sourceHandle: 84041a86-a0db-45d0-a901-31215c5a5a96
+      target: '1725447590609'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-02068f50-6372-41ff-9631-114afe8bbf62-1725447600850-target
+      source: '1724295933322'
+      sourceHandle: 02068f50-6372-41ff-9631-114afe8bbf62
+      target: '1725447600850'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-b0daa8e8-8e4c-40cd-8ab1-b341bba281f3-1725447610656-target
+      source: '1724295933322'
+      sourceHandle: b0daa8e8-8e4c-40cd-8ab1-b341bba281f3
+      target: '1725447610656'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-2f377bd3-2a89-4d60-882f-6eb60158fd0f-1725447621280-target
+      source: '1724295933322'
+      sourceHandle: 2f377bd3-2a89-4d60-882f-6eb60158fd0f
+      target: '1725447621280'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-144f273d-1cbe-4fd4-b32b-bca8ca8abac5-1725447629839-target
+      source: '1724295933322'
+      sourceHandle: 144f273d-1cbe-4fd4-b32b-bca8ca8abac5
+      target: '1725447629839'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-28f5fb54-7c2d-4e2f-bf38-e87cc8fa87b2-1725447637636-target
+      source: '1724295933322'
+      sourceHandle: 28f5fb54-7c2d-4e2f-bf38-e87cc8fa87b2
+      target: '1725447637636'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-adf2edfd-9cda-437a-ba9c-7214ef1ed3e9-1725447645784-target
+      source: '1724295933322'
+      sourceHandle: adf2edfd-9cda-437a-ba9c-7214ef1ed3e9
+      target: '1725447645784'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-b905c704-abda-4eb9-8273-79bde6ff5e4b-1725447652978-target
+      source: '1724295933322'
+      sourceHandle: b905c704-abda-4eb9-8273-79bde6ff5e4b
+      target: '1725447652978'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-d1e3536f-26aa-4cd0-a1fe-678c82d91c92-1725447660250-target
+      source: '1724295933322'
+      sourceHandle: d1e3536f-26aa-4cd0-a1fe-678c82d91c92
+      target: '1725447660250'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-2320e115-84e4-476b-887e-6c895b02d52e-1725447670588-target
+      source: '1724295933322'
+      sourceHandle: 2320e115-84e4-476b-887e-6c895b02d52e
+      target: '1725447670588'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-9a09642c-9cf2-4e3f-88a0-b7d050ba1a88-1725447679793-target
+      source: '1724295933322'
+      sourceHandle: 9a09642c-9cf2-4e3f-88a0-b7d050ba1a88
+      target: '1725447679793'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-c1acd1b3-3c9d-4b68-991e-b5b5772da01e-1725447690299-target
+      source: '1724295933322'
+      sourceHandle: c1acd1b3-3c9d-4b68-991e-b5b5772da01e
+      target: '1725447690299'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-f3502bb1-6d5a-4e41-9ab6-519c903acc0f-1725447704243-target
+      source: '1724295933322'
+      sourceHandle: f3502bb1-6d5a-4e41-9ab6-519c903acc0f
+      target: '1725447704243'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-a587905f-64fa-47e3-a68f-cdb1e77e3509-1725447712045-target
+      source: '1724295933322'
+      sourceHandle: a587905f-64fa-47e3-a68f-cdb1e77e3509
+      target: '1725447712045'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-12418d43-fd22-49a8-8a42-d8b64eb348c4-1725447719456-target
+      source: '1724295933322'
+      sourceHandle: 12418d43-fd22-49a8-8a42-d8b64eb348c4
+      target: '1725447719456'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-7767827b-61c1-4066-b821-671c0bc3ff71-1725447726323-target
+      source: '1724295933322'
+      sourceHandle: 7767827b-61c1-4066-b821-671c0bc3ff71
+      target: '1725447726323'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-28cb54b1-6de5-4896-b84a-5039d79fd377-1725447737747-target
+      source: '1724295933322'
+      sourceHandle: 28cb54b1-6de5-4896-b84a-5039d79fd377
+      target: '1725447737747'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-1a96f896-b465-4949-b911-64b83a2f4302-1725447745930-target
+      source: '1724295933322'
+      sourceHandle: 1a96f896-b465-4949-b911-64b83a2f4302
+      target: '1725447745930'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-c6f21258-a3e0-4dbb-b1fd-76f63de97e47-1725447756880-target
+      source: '1724295933322'
+      sourceHandle: c6f21258-a3e0-4dbb-b1fd-76f63de97e47
+      target: '1725447756880'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-ce28dd41-5fa6-4dd3-92f5-884cd1801a93-1725447764089-target
+      source: '1724295933322'
+      sourceHandle: ce28dd41-5fa6-4dd3-92f5-884cd1801a93
+      target: '1725447764089'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-31d4a1bd-9e3d-4825-a9c4-8f443cb36a73-1725447774702-target
+      source: '1724295933322'
+      sourceHandle: 31d4a1bd-9e3d-4825-a9c4-8f443cb36a73
+      target: '1725447774702'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-07d5c383-b3fe-470c-9c68-110c2020f52f-1725447782138-target
+      source: '1724295933322'
+      sourceHandle: 07d5c383-b3fe-470c-9c68-110c2020f52f
+      target: '1725447782138'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-3b50737f-8ec0-495d-9ae2-050a4794b066-1725447790022-target
+      source: '1724295933322'
+      sourceHandle: 3b50737f-8ec0-495d-9ae2-050a4794b066
+      target: '1725447790022'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-5489b729-0252-4c85-a354-7d8d92ab1648-1725447798794-target
+      source: '1724295933322'
+      sourceHandle: 5489b729-0252-4c85-a354-7d8d92ab1648
+      target: '1725447798794'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-11cd380b-0675-4b37-96cd-8d994072b9dd-1725447806140-target
+      source: '1724295933322'
+      sourceHandle: 11cd380b-0675-4b37-96cd-8d994072b9dd
+      target: '1725447806140'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-7758d265-3d35-4066-ba4b-4a81656ff52b-1725447814585-target
+      source: '1724295933322'
+      sourceHandle: 7758d265-3d35-4066-ba4b-4a81656ff52b
+      target: '1725447814585'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-a704df2e-aa2f-48ce-bc73-2cf200a1c10b-1725447823508-target
+      source: '1724295933322'
+      sourceHandle: a704df2e-aa2f-48ce-bc73-2cf200a1c10b
+      target: '1725447823508'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-8c78d0a2-833c-45e0-80e5-cdbd0a6b862a-1725447831272-target
+      source: '1724295933322'
+      sourceHandle: 8c78d0a2-833c-45e0-80e5-cdbd0a6b862a
+      target: '1725447831272'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1724295933322-362cfec1-3dbc-45bc-a970-e17cc4c15db5-1725447840573-target
+      source: '1724295933322'
+      sourceHandle: 362cfec1-3dbc-45bc-a970-e17cc4c15db5
+      target: '1725447840573'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447559189-source-1724296066993-target
+      source: '1725447559189'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447579442-source-1724296066993-target
+      source: '1725447579442'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447590609-source-1724296066993-target
+      source: '1725447590609'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447600850-source-1724296066993-target
+      source: '1725447600850'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447610656-source-1724296066993-target
+      source: '1725447610656'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447621280-source-1724296066993-target
+      source: '1725447621280'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447629839-source-1724296066993-target
+      source: '1725447629839'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447637636-source-1724296066993-target
+      source: '1725447637636'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447645784-source-1724296066993-target
+      source: '1725447645784'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447652978-source-1724296066993-target
+      source: '1725447652978'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447660250-source-1724296066993-target
+      source: '1725447660250'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447670588-source-1724296066993-target
+      source: '1725447670588'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447679793-source-1724296066993-target
+      source: '1725447679793'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447690299-source-1724296066993-target
+      source: '1725447690299'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447704243-source-1724296066993-target
+      source: '1725447704243'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447712045-source-1724296066993-target
+      source: '1725447712045'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447719456-source-1724296066993-target
+      source: '1725447719456'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447726323-source-1724296066993-target
+      source: '1725447726323'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447737747-source-1724296066993-target
+      source: '1725447737747'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447745930-source-1724296066993-target
+      source: '1725447745930'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447756880-source-1724296066993-target
+      source: '1725447756880'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447764089-source-1724296066993-target
+      source: '1725447764089'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447774702-source-1724296066993-target
+      source: '1725447774702'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447782138-source-1724296066993-target
+      source: '1725447782138'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447790022-source-1724296066993-target
+      source: '1725447790022'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447798794-source-1724296066993-target
+      source: '1725447798794'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447806140-source-1724296066993-target
+      source: '1725447806140'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447814585-source-1724296066993-target
+      source: '1725447814585'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447823508-source-1724296066993-target
+      source: '1725447823508'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447831272-source-1724296066993-target
+      source: '1725447831272'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: knowledge-retrieval
+        targetType: variable-aggregator
+      id: 1725447840573-source-1724296066993-target
+      source: '1725447840573'
+      sourceHandle: source
+      target: '1724296066993'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: variable-aggregator
+        targetType: code
+      id: 1724296066993-source-1735543738067-target
+      source: '1724296066993'
+      sourceHandle: source
+      target: '1735543738067'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: code
+        targetType: llm
+      id: 1735543738067-source-llm-target
+      source: '1735543738067'
+      sourceHandle: source
+      target: llm
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        sourceType: llm
+        targetType: answer
+      id: llm-source-answer-target
+      source: llm
+      sourceHandle: source
+      target: answer
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        selected: false
+        title: START
+        type: start
+        variables:
+        - label: お住まいの都道府県
+          max_length: 48
+          options:
+          - 北海道
+          - 青森県
+          - 岩手県
+          - 宮城県
+          - 秋田県
+          - 山形県
+          - 福島県
+          - 茨城県
+          - 栃木県
+          - 群馬県
+          - 埼玉県
+          - 千葉県
+          - 東京都
+          - 神奈川県
+          - 新潟県
+          - 富山県
+          - 石川県
+          - 福井県
+          - 山梨県
+          - 長野県
+          - 岐阜県
+          - 静岡県
+          - 愛知県
+          - 三重県
+          - 滋賀県
+          - 京都府
+          - 大阪府
+          - 兵庫県
+          - 奈良県
+          - 和歌山県
+          - 鳥取県
+          - 島根県
+          - 岡山県
+          - 広島県
+          - 山口県
+          - 徳島県
+          - 香川県
+          - 愛媛県
+          - 高知県
+          - 福岡県
+          - 佐賀県
+          - 長崎県
+          - 熊本県
+          - 大分県
+          - 宮崎県
+          - 鹿児島県
+          - 沖縄県
+          required: true
+          type: select
+          variable: prefecture
+      height: 90
+      id: start
+      position:
+        x: 77.97232639875085
+        y: 282
+      positionAbsolute:
+        x: 77.97232639875085
+        y: 282
+      selected: false
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 5dacfe37-4b19-4db7-9f24-58797dc23d0f
+        multiple_retrieval_config:
+          reranking_model:
+            model: rerank-multilingual-v3.0
+            provider: cohere
+          score_threshold: null
+          top_k: 5
+        query_variable_selector:
+        - sys
+        - query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 東京都_KNOWLEDGE RETRIEVAL
+        type: knowledge-retrieval
+      height: 92
+      id: knowledge_retrieval
+      position:
+        x: 676.4958237725527
+        y: 282
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 282
+      selected: false
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1724296066993'
+          - output
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+        model:
+          completion_params:
+            json_schema: "{\n    \"name\": \"answer_schema\",\n    \"strict\": true,\n\
+              \    \"schema\": {\n        \"type\": \"object\",\n        \"properties\"\
+              : {\n            \"answer\": {\n                \"type\": \"string\"\
+              ,\n                \"description\": \"Answer to the question\"\n   \
+              \         },\n            \"citations\": {\n                \"type\"\
+              : \"array\",\n                \"description\": \"List of citations\"\
+              ,\n                \"items\": {\n                    \"type\": \"object\"\
+              ,\n                    \"properties\": {\n                        \"\
+              knowledge_index\": {\n                            \"type\": \"string\"\
+              ,\n                            \"description\": \"Index of the citation.\
+              \ 0 means the first citation, 1 means the second citation, and so on.\"\
+              \n                        },\n                        \"substring_in_the_answer\"\
+              : {\n                            \"type\": \"string\",\n           \
+              \                 \"description\": \"Substring in the answer that refers\
+              \ to the citation\"\n                        }\n                   \
+              \ },\n                    \"required\": [\n                        \"\
+              knowledge_index\",\n                        \"substring_in_the_answer\"\
+              \n                    ],\n                    \"additionalProperties\"\
+              : false\n                }\n            }\n        },\n        \"required\"\
+              : [\n            \"citations\", \"answer\"\n        ],\n        \"additionalProperties\"\
+              : false\n    }\n}"
+            response_format: json_schema
+            stop: []
+          mode: chat
+          name: southcentralus-gpt-4o
+          provider: azure_openai
+        prompt_template:
+        - id: e412aeba-9063-441f-9002-f241452b863c
+          role: system
+          text: '<task_instruction>
+
+            Answer the question about intractable disease and its support information.
+
+            Use the following context as your learned knowledge, inside <context></context>
+            XML tags.
+
+            In addition to the answer itself,
+
+            output the substringss in the answer that refers each piece of knowledge
+            and return them as a dictionary.
+
+            </task_instruction>
+
+
+            <question>
+
+            {{#sys.query#}}
+
+            </question>
+
+
+
+            <context>
+
+            {{#1735543738067.context_lines#}}
+
+            </context>
+
+
+
+            <constraints>
+
+            When answer to user:
+
+            - If you don''t know, just say that you don''t know.
+
+            - If you don''t know when you are not sure, ask for clarification.
+
+            - Avoid including URLs  in the response.
+
+            - Avoid answering based on information that is not included in the context.
+
+            - If the provided context is empty, tell the user that no information
+            is available.
+
+            - Avoid mentioning that you obtained the information from the context.
+
+            And answer according to the language of the user''s question.
+
+            </constraint>'
+        selected: false
+        title: LLM
+        type: llm
+        vision:
+          configs: null
+          enabled: false
+          variable_selector: null
+      height: 98
+      id: llm
+      position:
+        x: 1966.0889856773385
+        y: 495.17655679909996
+      positionAbsolute:
+        x: 1966.0889856773385
+        y: 495.17655679909996
+      selected: true
+      type: custom
+      width: 244
+    - data:
+        answer: '{{#llm.text#}}'
+        selected: false
+        title: ANSWER
+        type: answer
+      height: 103
+      id: answer
+      position:
+        x: 2377.356365060179
+        y: 335.8986651887779
+      positionAbsolute:
+        x: 2377.356365060179
+        y: 335.8986651887779
+      selected: false
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: 161e1291-6f77-40e5-aa25-3971eedefd44
+            value: 東京都
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 'true'
+          logical_operator: and
+        - case_id: a4c181e6-6fcd-446d-9590-8c9eb3caf18f
+          conditions:
+          - comparison_operator: is
+            id: 24b77a11-1332-47c1-967c-333819a5d9cf
+            value: 神奈川県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: a4c181e6-6fcd-446d-9590-8c9eb3caf18f
+          logical_operator: and
+        - case_id: 67cec2bb-0e30-4bf4-a3fd-088c92af4071
+          conditions:
+          - comparison_operator: is
+            id: 3d069f5a-8f6a-4308-aac9-ad70a33b8112
+            value: 群馬県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 67cec2bb-0e30-4bf4-a3fd-088c92af4071
+          logical_operator: and
+        - case_id: b6acc5f8-62e5-4b87-9c79-821a036393f5
+          conditions:
+          - comparison_operator: is
+            id: 54ca4551-01cd-4061-9ef3-4af0e952f8a2
+            value: 千葉県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: b6acc5f8-62e5-4b87-9c79-821a036393f5
+          logical_operator: and
+        - case_id: c856f9df-bef7-4a65-89f5-43fb708bdfec
+          conditions:
+          - comparison_operator: is
+            id: c90b5397-6986-4e66-84ac-d54e4ee38884
+            value: 北海道
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: c856f9df-bef7-4a65-89f5-43fb708bdfec
+          logical_operator: and
+        - case_id: 04ae8061-21bc-4a63-aa22-9a2de2318c07
+          conditions:
+          - comparison_operator: is
+            id: 3d021513-9f06-4a7f-a387-9e79c1f9b1b3
+            value: 青森県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 04ae8061-21bc-4a63-aa22-9a2de2318c07
+          logical_operator: and
+        - case_id: 5ca1f550-e06a-4537-8fa5-795346db1269
+          conditions:
+          - comparison_operator: is
+            id: 66a738eb-0dac-4354-a08a-012f6f783f0b
+            value: 岩手県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 5ca1f550-e06a-4537-8fa5-795346db1269
+          logical_operator: and
+        - case_id: 338c1a44-f547-4213-bdee-220f66557b1e
+          conditions:
+          - comparison_operator: is
+            id: 105e8bd6-6f20-45bc-987c-1d5d944f2528
+            value: 宮城県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 338c1a44-f547-4213-bdee-220f66557b1e
+          logical_operator: and
+        - case_id: 9098e17b-03a0-460c-b481-5563af5166a3
+          conditions:
+          - comparison_operator: is
+            id: 315adf8d-aae8-4787-a268-8cbf18c45a60
+            value: 秋田県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 9098e17b-03a0-460c-b481-5563af5166a3
+          logical_operator: and
+        - case_id: e7023d24-1cdf-49ff-817e-2282796eb58c
+          conditions:
+          - comparison_operator: is
+            id: 86ba9c76-9e83-41e2-8c3c-399d51a6b6b2
+            value: 山形県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: e7023d24-1cdf-49ff-817e-2282796eb58c
+          logical_operator: and
+        - case_id: ff8fc8f6-95e7-4fc3-9414-94ea93ca45b4
+          conditions:
+          - comparison_operator: is
+            id: 60b4ff83-d90c-46c2-8663-d3110b0cc63a
+            value: 福島県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: ff8fc8f6-95e7-4fc3-9414-94ea93ca45b4
+          logical_operator: and
+        - case_id: fafc286a-492c-4212-aea5-9c435be75fbf
+          conditions:
+          - comparison_operator: is
+            id: 926d8b45-4f69-4f51-a7e1-5f724af1b88f
+            value: 茨城県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: fafc286a-492c-4212-aea5-9c435be75fbf
+          logical_operator: and
+        - case_id: 1b19da81-8a02-4c1c-806a-27bec15efefd
+          conditions:
+          - comparison_operator: is
+            id: 9c89a70e-a7b4-4514-92f0-80f621a1c154
+            value: 栃木県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 1b19da81-8a02-4c1c-806a-27bec15efefd
+          logical_operator: and
+        - case_id: 9cb5ff56-f925-4c03-94c6-a18960ada96f
+          conditions:
+          - comparison_operator: is
+            id: 986dab85-b89d-4315-a25e-1732a9e86684
+            value: 埼玉県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 9cb5ff56-f925-4c03-94c6-a18960ada96f
+          logical_operator: and
+        - case_id: 0aab4064-c5f1-4ccc-9068-2393f0740f48
+          conditions:
+          - comparison_operator: is
+            id: dc2d4493-b8d1-4b59-8e45-5a4281e3bc3b
+            value: 新潟県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 0aab4064-c5f1-4ccc-9068-2393f0740f48
+          logical_operator: and
+        - case_id: 988443ec-aa61-4aad-8397-833458fa1b4b
+          conditions:
+          - comparison_operator: is
+            id: 3ae2483b-1bda-44fb-9f0b-707231d71772
+            value: 富山県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 988443ec-aa61-4aad-8397-833458fa1b4b
+          logical_operator: and
+        - case_id: 023153d0-4c9d-4593-b4b1-446f3ed8f866
+          conditions:
+          - comparison_operator: contains
+            id: ed644622-c05e-4011-af31-0a89d6ea53de
+            value: 石川県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 023153d0-4c9d-4593-b4b1-446f3ed8f866
+          logical_operator: and
+        - case_id: d997571e-9b88-431a-a24a-5df70dfea84b
+          conditions:
+          - comparison_operator: contains
+            id: 6dbd8596-a50d-467f-a91f-33d00313b6e8
+            value: 福井県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: d997571e-9b88-431a-a24a-5df70dfea84b
+          logical_operator: and
+        - case_id: 84041a86-a0db-45d0-a901-31215c5a5a96
+          conditions:
+          - comparison_operator: contains
+            id: f06322a1-5cd7-43a0-a8f0-79b231b6b765
+            value: 山梨県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 84041a86-a0db-45d0-a901-31215c5a5a96
+          logical_operator: and
+        - case_id: 02068f50-6372-41ff-9631-114afe8bbf62
+          conditions:
+          - comparison_operator: contains
+            id: 235801a5-fd04-4d60-a7c3-6b0412889a68
+            value: 長野県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 02068f50-6372-41ff-9631-114afe8bbf62
+          logical_operator: and
+        - case_id: b0daa8e8-8e4c-40cd-8ab1-b341bba281f3
+          conditions:
+          - comparison_operator: contains
+            id: f89b2a24-12b6-4d38-8917-578bc24a4e90
+            value: 岐阜県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: b0daa8e8-8e4c-40cd-8ab1-b341bba281f3
+          logical_operator: and
+        - case_id: 2f377bd3-2a89-4d60-882f-6eb60158fd0f
+          conditions:
+          - comparison_operator: contains
+            id: 72ed7ece-0a99-4887-98fe-e2824841830b
+            value: 静岡県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 2f377bd3-2a89-4d60-882f-6eb60158fd0f
+          logical_operator: and
+        - case_id: 144f273d-1cbe-4fd4-b32b-bca8ca8abac5
+          conditions:
+          - comparison_operator: contains
+            id: 37ac1731-8272-41a1-8fc7-0490dfdf1f49
+            value: 愛知県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 144f273d-1cbe-4fd4-b32b-bca8ca8abac5
+          logical_operator: and
+        - case_id: 28f5fb54-7c2d-4e2f-bf38-e87cc8fa87b2
+          conditions:
+          - comparison_operator: contains
+            id: a86ee5de-f247-449f-8e42-922336a017dd
+            value: 三重県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 28f5fb54-7c2d-4e2f-bf38-e87cc8fa87b2
+          logical_operator: and
+        - case_id: adf2edfd-9cda-437a-ba9c-7214ef1ed3e9
+          conditions:
+          - comparison_operator: contains
+            id: d150b22f-0a46-465c-a6bb-5a5badf34ce2
+            value: 滋賀県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: adf2edfd-9cda-437a-ba9c-7214ef1ed3e9
+          logical_operator: and
+        - case_id: b905c704-abda-4eb9-8273-79bde6ff5e4b
+          conditions:
+          - comparison_operator: contains
+            id: 2b7c1307-08b2-4663-920b-d6d8d6c18be9
+            value: 京都府
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: b905c704-abda-4eb9-8273-79bde6ff5e4b
+          logical_operator: and
+        - case_id: d1e3536f-26aa-4cd0-a1fe-678c82d91c92
+          conditions:
+          - comparison_operator: contains
+            id: 5b541ba2-20f5-417f-81bc-00f876b99fcb
+            value: 大阪府
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: d1e3536f-26aa-4cd0-a1fe-678c82d91c92
+          logical_operator: and
+        - case_id: 2320e115-84e4-476b-887e-6c895b02d52e
+          conditions:
+          - comparison_operator: contains
+            id: a7d32f2f-327b-4494-8a18-3c057133d5c8
+            value: 兵庫県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 2320e115-84e4-476b-887e-6c895b02d52e
+          logical_operator: and
+        - case_id: 9a09642c-9cf2-4e3f-88a0-b7d050ba1a88
+          conditions:
+          - comparison_operator: contains
+            id: 6fe07d9e-ca3b-4d3c-b69e-030f8ea92b81
+            value: 奈良県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 9a09642c-9cf2-4e3f-88a0-b7d050ba1a88
+          logical_operator: and
+        - case_id: c1acd1b3-3c9d-4b68-991e-b5b5772da01e
+          conditions:
+          - comparison_operator: contains
+            id: 9dc11b9f-3820-4aa7-bce5-c02a1a5c3348
+            value: 和歌山県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: c1acd1b3-3c9d-4b68-991e-b5b5772da01e
+          logical_operator: and
+        - case_id: f3502bb1-6d5a-4e41-9ab6-519c903acc0f
+          conditions:
+          - comparison_operator: contains
+            id: 7c113ade-b6b6-42df-97e8-2c0e87fd732b
+            value: 鳥取県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: f3502bb1-6d5a-4e41-9ab6-519c903acc0f
+          logical_operator: and
+        - case_id: a587905f-64fa-47e3-a68f-cdb1e77e3509
+          conditions:
+          - comparison_operator: contains
+            id: aaf3c1e1-a294-4871-b1c2-601c6bf70bf7
+            value: 島根県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: a587905f-64fa-47e3-a68f-cdb1e77e3509
+          logical_operator: and
+        - case_id: 12418d43-fd22-49a8-8a42-d8b64eb348c4
+          conditions:
+          - comparison_operator: contains
+            id: 82385206-9f51-415f-8aa1-005660369927
+            value: 岡山県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 12418d43-fd22-49a8-8a42-d8b64eb348c4
+          logical_operator: and
+        - case_id: 7767827b-61c1-4066-b821-671c0bc3ff71
+          conditions:
+          - comparison_operator: contains
+            id: 14f5566c-f427-45cc-a610-3c9ac5aea47a
+            value: 広島県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 7767827b-61c1-4066-b821-671c0bc3ff71
+          logical_operator: and
+        - case_id: 28cb54b1-6de5-4896-b84a-5039d79fd377
+          conditions:
+          - comparison_operator: contains
+            id: ef1ce78e-24c5-4e3c-a161-01d507ef3b7f
+            value: 山口県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 28cb54b1-6de5-4896-b84a-5039d79fd377
+          logical_operator: and
+        - case_id: 1a96f896-b465-4949-b911-64b83a2f4302
+          conditions:
+          - comparison_operator: contains
+            id: 456ecd11-bb12-41ad-aa87-b473e788a828
+            value: 徳島県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 1a96f896-b465-4949-b911-64b83a2f4302
+          logical_operator: and
+        - case_id: c6f21258-a3e0-4dbb-b1fd-76f63de97e47
+          conditions:
+          - comparison_operator: contains
+            id: e1b62c7c-5e36-4b71-a87d-de889cfc06b2
+            value: 香川県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: c6f21258-a3e0-4dbb-b1fd-76f63de97e47
+          logical_operator: and
+        - case_id: ce28dd41-5fa6-4dd3-92f5-884cd1801a93
+          conditions:
+          - comparison_operator: contains
+            id: a881f7f4-8aaa-4dbc-8e86-d5ae3ae8b886
+            value: 愛媛県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: ce28dd41-5fa6-4dd3-92f5-884cd1801a93
+          logical_operator: and
+        - case_id: 31d4a1bd-9e3d-4825-a9c4-8f443cb36a73
+          conditions:
+          - comparison_operator: contains
+            id: b983f978-0e16-4a34-8ad5-df3cb185abfc
+            value: 高知県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 31d4a1bd-9e3d-4825-a9c4-8f443cb36a73
+          logical_operator: and
+        - case_id: 07d5c383-b3fe-470c-9c68-110c2020f52f
+          conditions:
+          - comparison_operator: contains
+            id: ee5b6540-06eb-464b-81eb-cedfbfd79730
+            value: 福岡県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 07d5c383-b3fe-470c-9c68-110c2020f52f
+          logical_operator: and
+        - case_id: 3b50737f-8ec0-495d-9ae2-050a4794b066
+          conditions:
+          - comparison_operator: contains
+            id: f2587f60-5624-4927-8cd8-a10b887f5974
+            value: 佐賀県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 3b50737f-8ec0-495d-9ae2-050a4794b066
+          logical_operator: and
+        - case_id: 5489b729-0252-4c85-a354-7d8d92ab1648
+          conditions:
+          - comparison_operator: contains
+            id: 211919e1-e1d5-491b-bb09-033605021f97
+            value: 長崎県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 5489b729-0252-4c85-a354-7d8d92ab1648
+          logical_operator: and
+        - case_id: 11cd380b-0675-4b37-96cd-8d994072b9dd
+          conditions:
+          - comparison_operator: contains
+            id: 7daad18c-7631-406e-aa13-24205d61d499
+            value: 熊本県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 11cd380b-0675-4b37-96cd-8d994072b9dd
+          logical_operator: and
+        - case_id: 7758d265-3d35-4066-ba4b-4a81656ff52b
+          conditions:
+          - comparison_operator: contains
+            id: 4632a136-e932-45d7-905f-75ff0e76f43c
+            value: 大分県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 7758d265-3d35-4066-ba4b-4a81656ff52b
+          logical_operator: and
+        - case_id: a704df2e-aa2f-48ce-bc73-2cf200a1c10b
+          conditions:
+          - comparison_operator: contains
+            id: eac6c8a0-90c3-4965-9469-477018dfc323
+            value: 宮崎県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: a704df2e-aa2f-48ce-bc73-2cf200a1c10b
+          logical_operator: and
+        - case_id: 8c78d0a2-833c-45e0-80e5-cdbd0a6b862a
+          conditions:
+          - comparison_operator: contains
+            id: bb959eb4-7124-4b85-bcc9-35de22d40143
+            value: 鹿児島県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 8c78d0a2-833c-45e0-80e5-cdbd0a6b862a
+          logical_operator: and
+        - case_id: 362cfec1-3dbc-45bc-a970-e17cc4c15db5
+          conditions:
+          - comparison_operator: contains
+            id: 9fe73b22-dbc0-4bbd-987c-c0d00cef50a8
+            value: 沖縄県
+            varType: string
+            variable_selector:
+            - start
+            - prefecture
+          id: 362cfec1-3dbc-45bc-a970-e17cc4c15db5
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: IF/ELSE
+        type: if-else
+      height: 2334
+      id: '1724295933322'
+      position:
+        x: 373.16870499579005
+        y: 282
+      positionAbsolute:
+        x: 373.16870499579005
+        y: 282
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - a36e1ab4-1269-4be7-9b60-398011570132
+        desc: ''
+        multiple_retrieval_config:
+          reranking_model:
+            model: rerank-english-v2.0
+            provider: cohere
+          top_k: 2
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: multiple
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 神奈川県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1724295994956'
+      position:
+        x: 676.4958237725527
+        y: 409.44915028991437
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 409.44915028991437
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        advanced_settings:
+          group_enabled: false
+          groups:
+          - groupId: c204c174-488d-404e-a0c1-43db2d1851ed
+            group_name: Group1
+            output_type: array[object]
+            variables:
+            - - '1725447840573'
+              - result
+            - - '1725447831272'
+              - result
+            - - '1725447823508'
+              - result
+            - - '1725447814585'
+              - result
+            - - '1725447806140'
+              - result
+            - - '1725447798794'
+              - result
+            - - '1725447790022'
+              - result
+            - - '1725447782138'
+              - result
+            - - '1725447774702'
+              - result
+            - - '1725447764089'
+              - result
+            - - '1725447756880'
+              - result
+            - - '1725447745930'
+              - result
+            - - '1725447737747'
+              - result
+            - - '1725447726323'
+              - result
+            - - '1725447719456'
+              - result
+            - - '1725447712045'
+              - result
+            - - '1725447704243'
+              - result
+            - - '1725447690299'
+              - result
+            - - '1725447679793'
+              - result
+            - - '1725447670588'
+              - result
+            - - '1725447660250'
+              - result
+            - - '1725447652978'
+              - result
+            - - '1725447645784'
+              - result
+            - - '1725447637636'
+              - result
+            - - '1725447629839'
+              - result
+            - - '1725447621280'
+              - result
+            - - '1725447610656'
+              - result
+            - - '1725447600850'
+              - result
+            - - '1725447590609'
+              - result
+            - - '1725447579442'
+              - result
+            - - '1725447559189'
+              - result
+            - - '1725447496945'
+              - result
+            - - '1725447486300'
+              - result
+            - - '1725447469989'
+              - result
+            - - '1725447446212'
+              - result
+            - - '1725447415391'
+              - result
+            - - '1725447392498'
+              - result
+            - - '1725447344618'
+              - result
+            - - '1725447273187'
+              - result
+            - - '1724828958836'
+              - result
+            - - '1724828935601'
+              - result
+            - - '1724828915764'
+              - result
+            - - '1724828894466'
+              - result
+            - - '1724828830968'
+              - result
+            - - '1724828868242'
+              - result
+            - - '1724295994956'
+              - result
+            - - knowledge_retrieval
+              - result
+        desc: ''
+        output_type: array[object]
+        selected: false
+        title: Variable Aggregator
+        type: variable-aggregator
+        variables:
+        - - '1725447840573'
+          - result
+        - - '1725447831272'
+          - result
+        - - '1725447823508'
+          - result
+        - - '1725447814585'
+          - result
+        - - '1725447806140'
+          - result
+        - - '1725447798794'
+          - result
+        - - '1725447790022'
+          - result
+        - - '1725447782138'
+          - result
+        - - '1725447774702'
+          - result
+        - - '1725447764089'
+          - result
+        - - '1725447756880'
+          - result
+        - - '1725447745930'
+          - result
+        - - '1725447737747'
+          - result
+        - - '1725447726323'
+          - result
+        - - '1725447719456'
+          - result
+        - - '1725447712045'
+          - result
+        - - '1725447704243'
+          - result
+        - - '1725447690299'
+          - result
+        - - '1725447679793'
+          - result
+        - - '1725447670588'
+          - result
+        - - '1725447660250'
+          - result
+        - - '1725447652978'
+          - result
+        - - '1725447645784'
+          - result
+        - - '1725447637636'
+          - result
+        - - '1725447629839'
+          - result
+        - - '1725447621280'
+          - result
+        - - '1725447610656'
+          - result
+        - - '1725447600850'
+          - result
+        - - '1725447590609'
+          - result
+        - - '1725447579442'
+          - result
+        - - '1725447559189'
+          - result
+        - - '1725447496945'
+          - result
+        - - '1725447486300'
+          - result
+        - - '1725447469989'
+          - result
+        - - '1725447446212'
+          - result
+        - - '1725447415391'
+          - result
+        - - '1725447392498'
+          - result
+        - - '1725447344618'
+          - result
+        - - '1725447273187'
+          - result
+        - - '1724828958836'
+          - result
+        - - '1724828935601'
+          - result
+        - - '1724828915764'
+          - result
+        - - '1724828894466'
+          - result
+        - - '1724828830968'
+          - result
+        - - '1724828868242'
+          - result
+        - - '1724295994956'
+          - result
+        - - knowledge_retrieval
+          - result
+      height: 1120
+      id: '1724296066993'
+      position:
+        x: 1002.8532595657252
+        y: 335.8986651887779
+      positionAbsolute:
+        x: 1002.8532595657252
+        y: 335.8986651887779
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 246dfd22-910e-4df6-83e0-96cb4595b9f1
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 群馬県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1724828830968'
+      position:
+        x: 676.4958237725527
+        y: 540.4491502899143
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 540.4491502899143
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 9b49a83c-304f-46be-a5b8-4ffa23656d8d
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 千葉県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1724828868242'
+      position:
+        x: 676.4958237725527
+        y: 672.0054375064749
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 672.0054375064749
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - d0c7bac5-8213-438e-bd16-3c75b37fb7bb
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 北海道_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1724828894466'
+      position:
+        x: 676.4958237725527
+        y: 803.0054375064749
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 803.0054375064749
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - f90f5e33-ee5a-4401-a4dc-74d2223238de
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 青森県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1724828915764'
+      position:
+        x: 676.4958237725527
+        y: 934.0054375064749
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 934.0054375064749
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 2f9cb564-da52-4a3f-934f-91bd182cabb4
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 岩手県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1724828935601'
+      position:
+        x: 676.4958237725527
+        y: 1065.005437506475
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 1065.005437506475
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - c914da5a-d15d-45cc-a4f7-bda6644abfca
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 宮城県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1724828958836'
+      position:
+        x: 676.4958237725527
+        y: 1195.3838626720228
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 1195.3838626720228
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 7f8f5483-3767-4b8c-b569-8d41109f4ece
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 秋田県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447273187'
+      position:
+        x: 676.4958237725527
+        y: 1326.3838626720228
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 1326.3838626720228
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 3a4ffb8f-287d-4498-9cb8-58489e2baf7f
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 山形県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447344618'
+      position:
+        x: 676.4958237725527
+        y: 1457.3838626720228
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 1457.3838626720228
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 93b1e856-500e-47db-b2cf-4f4c2b87a5ab
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 福島県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447392498'
+      position:
+        x: 676.4958237725527
+        y: 1588.3838626720228
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 1588.3838626720228
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 8a4a5294-7975-4814-a7a2-fcb11dee89ef
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 茨城県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447415391'
+      position:
+        x: 676.4958237725527
+        y: 1719.3838626720228
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 1719.3838626720228
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - f652bc3f-511e-40be-9dc7-60d500405667
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: '栃木県_Knowledge Retrieval '
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447446212'
+      position:
+        x: 676.4958237725527
+        y: 1812.3838626720228
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 1812.3838626720228
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 3cd920f5-0b20-4a1d-9f9d-8ffa646d6e79
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 埼玉県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447469989'
+      position:
+        x: 676.4958237725527
+        y: 1905.3838626720228
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 1905.3838626720228
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 47904d74-4d34-4e19-ac24-d93e9b3e3072
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 新潟県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447486300'
+      position:
+        x: 676.4958237725527
+        y: 1998.3838626720228
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 1998.3838626720228
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - c09ff60d-ab36-404d-884e-b9c179970124
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 富山県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447496945'
+      position:
+        x: 676.4958237725527
+        y: 2091.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 2091.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - ede04f06-d2d5-4ff7-b6ee-1813d0102097
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: '石川県_Knowledge Retrieval '
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447559189'
+      position:
+        x: 676.4958237725527
+        y: 2184.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 2184.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 4678a584-e45a-4c48-83eb-7b59cd8369bb
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 福井県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447579442'
+      position:
+        x: 676.4958237725527
+        y: 2280.5792703378193
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 2280.5792703378193
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 60a536cc-84c9-448c-bd0e-f07f097db6e0
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 山梨県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447590609'
+      position:
+        x: 676.4958237725527
+        y: 2370.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 2370.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 09605814-5359-4216-a1ff-ecefd2d3ea72
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 長野県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447600850'
+      position:
+        x: 676.4958237725527
+        y: 2463.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 2463.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 09605814-5359-4216-a1ff-ecefd2d3ea72
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 岐阜県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447610656'
+      position:
+        x: 676.4958237725527
+        y: 2556.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 2556.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - cbf215ca-ce11-40a6-9e2d-02b1d7d34ee4
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 静岡県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447621280'
+      position:
+        x: 676.4958237725527
+        y: 2649.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 2649.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - ea1e0324-1841-4b3b-a7d2-5356df8dfc2f
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 愛知県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447629839'
+      position:
+        x: 676.4958237725527
+        y: 2742.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 2742.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 9cc1bcdf-2011-40bc-a373-baaa0e3ece3f
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 三重県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447637636'
+      position:
+        x: 676.4958237725527
+        y: 2836.6548943613284
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 2836.6548943613284
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - d1d4b5b8-6751-4cbe-8137-414de6a0b6fb
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 滋賀県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447645784'
+      position:
+        x: 676.4958237725527
+        y: 2928.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 2928.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - dc2015fd-3e6c-47e9-93d2-1ae79984e799
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 京都府_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447652978'
+      position:
+        x: 676.4958237725527
+        y: 3021.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 3021.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - c258bb5a-a013-4ec6-aa37-fcc284d8b96c
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 大阪府_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447660250'
+      position:
+        x: 676.4958237725527
+        y: 3114.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 3114.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - f6888906-a5ed-4792-9d5e-87f743accfa8
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 兵庫県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447670588'
+      position:
+        x: 676.4958237725527
+        y: 3207.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 3207.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 563cd5f8-d1be-4b88-9e50-7f110f0cdd09
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 奈良県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447679793'
+      position:
+        x: 676.4958237725527
+        y: 3301.6548943613284
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 3301.6548943613284
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 61d8e95f-31f4-45a4-bc93-38ea434fc3ff
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 和歌山県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447690299'
+      position:
+        x: 676.4958237725527
+        y: 3393.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 3393.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 684fbab5-a868-4769-aaf9-5f7c6de3f326
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 鳥取県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447704243'
+      position:
+        x: 676.4958237725527
+        y: 3486.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 3486.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 94e64f53-d4d1-4200-93b0-26281c643399
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 島根県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447712045'
+      position:
+        x: 676.4958237725527
+        y: 3579.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 3579.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - e6ecd8cf-2d2f-4516-ae79-9f92f23d2294
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 岡山県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447719456'
+      position:
+        x: 676.4958237725527
+        y: 3672.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 3672.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 9e3656a7-6be6-4b18-ad3b-26be9f4044ba
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 広島県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447726323'
+      position:
+        x: 676.4958237725527
+        y: 3762.841799293411
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 3762.841799293411
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 8f9283df-d798-47a8-bcfd-eadb3c208901
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 山口県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447737747'
+      position:
+        x: 676.4958237725527
+        y: 3858.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 3858.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 30d22bd7-d679-4526-8181-bd446a7a112d
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 徳島県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447745930'
+      position:
+        x: 676.4958237725527
+        y: 3951.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 3951.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 017f70eb-72d5-4bae-b452-d54191f7c8e3
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 香川県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447756880'
+      position:
+        x: 676.4958237725527
+        y: 4044.3838626720226
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 4044.3838626720226
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 2fffbdb6-3b52-4751-b8e6-6efeec779411
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 愛媛県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447764089'
+      position:
+        x: 676.4958237725527
+        y: 4137.383862672023
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 4137.383862672023
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - ecb3b066-f2f4-404a-8844-ca2fb9e40af9
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 高知県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447774702'
+      position:
+        x: 676.4958237725527
+        y: 4230.383862672023
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 4230.383862672023
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 19458be6-e91a-40a4-aba6-2314840c0eb3
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 福岡県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447782138'
+      position:
+        x: 676.4958237725527
+        y: 4323.383862672023
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 4323.383862672023
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 30b9f399-47f4-4db2-95f1-bbba99ffb356
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 佐賀県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447790022'
+      position:
+        x: 676.4958237725527
+        y: 4416.383862672023
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 4416.383862672023
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 33b32f7c-d8af-4893-b60b-eecba7a1df6d
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 長崎県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447798794'
+      position:
+        x: 676.4958237725527
+        y: 4509.383862672023
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 4509.383862672023
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - ee3a5273-ce92-4f78-8116-a7e5205ce8e5
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 熊本県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447806140'
+      position:
+        x: 676.4958237725527
+        y: 4602.383862672023
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 4602.383862672023
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 87b8b068-cdd7-4db0-98ef-2c291d01cf10
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 大分県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447814585'
+      position:
+        x: 676.4958237725527
+        y: 4695.383862672023
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 4695.383862672023
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 3feb0bf5-81aa-4023-9ffd-d9794e6e0f6e
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 宮崎県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447823508'
+      position:
+        x: 676.4958237725527
+        y: 4788.383862672023
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 4788.383862672023
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - 777f1234-b51d-4b4b-9972-d523a453f992
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 鹿児島県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447831272'
+      position:
+        x: 676.4958237725527
+        y: 4881.383862672023
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 4881.383862672023
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - e33fe271-6aa6-4f57-b3f7-22170881c961
+        desc: ''
+        query_variable_selector:
+        - start
+        - sys.query
+        retrieval_mode: single
+        selected: false
+        single_retrieval_config:
+          model:
+            completion_params: {}
+            mode: chat
+            name: japaneast-gpt-4o
+            provider: azure_openai
+        title: 沖縄県_Knowledge Retrieval
+        type: knowledge-retrieval
+      height: 92
+      id: '1725447840573'
+      position:
+        x: 676.4958237725527
+        y: 4974.383862672023
+      positionAbsolute:
+        x: 676.4958237725527
+        y: 4974.383862672023
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "\ndef main(context: list) -> dict:\n    context_contents = [elem[\"\
+          content\"] for elem in context]\n    return {\n        \"context_lines\"\
+          : str(context_contents)\n    }\n"
+        code_language: python3
+        desc: ''
+        outputs:
+          context_lines:
+            children: null
+            type: string
+        selected: false
+        title: Context to String variable
+        type: code
+        variables:
+        - value_selector:
+          - '1724296066993'
+          - output
+          variable: context
+      height: 54
+      id: '1735543738067'
+      position:
+        x: 1451.0981990440487
+        y: 471.8776530630707
+      positionAbsolute:
+        x: 1451.0981990440487
+        y: 471.8776530630707
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 347.88476839936516
+      y: 344.8843165649448
+      zoom: 0.25
