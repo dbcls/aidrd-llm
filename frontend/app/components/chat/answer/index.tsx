@@ -73,21 +73,50 @@ const Answer: FC<IAnswerProps> = ({
   allToolIcons,
 }) => {
   let { id, content, feedback, citation, agent_thoughts, workflowProcess } = item
-  try {
+  let byWeb = false
+  let webSearchResultJson = []
+  if(content.startsWith('by_web\n')) {
+    /*
+     Web検索を行った場合は、以下のようなフォーマットで返答が返ってくる
+      by_web
+      <Web検索結果（BING Search API）のJSON>
+      <回答内容の<JSON>
+    */
+    byWeb = true
+    content = content.replace('by_web\n', '')
+    let [webSearchResult, contentPart] = content.split('\n\n')
+    webSearchResultJson = parse(webSearchResult)
+    content = contentPart
+  }
+
+
+  try {    
     let structuredContent = parse(content)
     content = structuredContent.answer
+    if(structuredContent.contexts) {
+      citation = structuredContent.contexts.map((context: any, index) => {
+        return {
+          document_id: index,
+          document_name: context.url,
+          document_title: context.title,
+          data_source_type: "web",
+          content: webSearchResultJson[0]?.organic.find((item: any) => item.url === context.url)?.snippet || ""
+        }
+      })
+    }
     let citationPlaces = structuredContent.citations
     citationPlaces.sort((a: any, b: any) => b.substring_in_the_answer.length - a.substring_in_the_answer.length);  
     citationPlaces.forEach(({ knowledge_index, substring_in_the_answer }) => {
       const URL = citation[knowledge_index]?.document_name;
       if(URL) {
-        const hyperlink = `[${substring_in_the_answer}[${parseInt(knowledge_index) + 1}]](${URL})`;
+        const hyperlink = `[${substring_in_the_answer}[${parseInt(knowledge_index) + 1}]](${URL}) `;
         content = content.replace(substring_in_the_answer, hyperlink);
       }
     });
   } catch (e) {
     console.log(e);
   }
+
   const isAgentMode = !!agent_thoughts && agent_thoughts.length > 0
 
   const { t } = useTranslation()
@@ -228,7 +257,7 @@ const Answer: FC<IAnswerProps> = ({
             </div>
             {
               !!citation?.length && (
-                <Citation data={citation} />
+                <Citation data={citation} byWeb={byWeb} />
               )
             }
             <div className='absolute top-[-14px] right-[-14px] flex flex-row justify-end gap-1'>

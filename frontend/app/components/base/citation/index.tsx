@@ -6,7 +6,8 @@ import type { CitationItem } from '../type'
 
 export type Resources = {
     documentId: string
-    documentName: string
+    documentUrl: string
+    documentTitle: string
     dataSourceType: string
     urlWithTextFragments?: string,
     sources: CitationItem[]
@@ -14,12 +15,13 @@ export type Resources = {
 
 type CitationProps = {
     data: CitationItem[]
+    byWeb?: boolean
     containerClassName?: string
 }
 
 /// ヒットしたセグメントの内容を元に、URLにテキストフラグメントを追加する
 function addTextFragments(baseUrl: string, content: string) {
-    if (baseUrl.includes('#')) {
+    if (!baseUrl || baseUrl.includes('#')) {
         // すでにアンカーやテクストフラグメントが含まれている場合はそのまま返す
         return baseUrl
     }
@@ -36,6 +38,7 @@ function addTextFragments(baseUrl: string, content: string) {
 
 const Citation: FC<CitationProps> = ({
     data,
+    byWeb = false,
     containerClassName = 'chat-answer-container',
 }) => {
     const citeWithFragments = process.env.NEXT_PUBLIC_CITE_WITH_FRAGMENTS?.toLowerCase() === 'true'
@@ -44,11 +47,13 @@ const Citation: FC<CitationProps> = ({
     const [limitNumberInOneLine, setlimitNumberInOneLine] = useState(0)
     const [showMore, setShowMore] = useState(false)
     const resources = useMemo(() => data.reduce((prev: Resources[], next) => {
+        console.log(next);
         const documentId = next.document_id
-        const documentName = next.document_name
+        const documentUrl = next.document_name
+        const documentTitle = next.document_title || next.document_name
         const dataSourceType = next.data_source_type
         const documentIndex = prev.findIndex(i => i.documentId === documentId)
-        const urlWithTextFragments = citeWithFragments ? addTextFragments(documentName, next.content) : ''
+        const urlWithTextFragments = citeWithFragments ? addTextFragments(documentUrl, next.content) : ''
 
         if (documentIndex > -1) {
             prev[documentIndex].sources.push(next)
@@ -56,7 +61,8 @@ const Citation: FC<CitationProps> = ({
         else {
             prev.push({
                 documentId,
-                documentName,
+                documentUrl,
+                documentTitle,
                 urlWithTextFragments,
                 dataSourceType,
                 sources: [next],
@@ -69,6 +75,10 @@ const Citation: FC<CitationProps> = ({
 
     return (
         <div className='-mb-1 -mt-3 ml-2 bg-slate-200 rounded-b-2xl rounded-lr-2xl'>
+            { byWeb && <div className='relative flex pl-4'>
+                ※この回答はWeb検索の情報を参考にしています。
+                </div>
+            }
             <div className='relative flex pl-4'>
                 <span className="mr-3 mt-5">引用:</span>
                 <div className="inline-block my-3">
@@ -77,8 +87,8 @@ const Citation: FC<CitationProps> = ({
                             <a
                                 class={`${s.citationLink}` + " block rounded-full bg-white my-2 py-1 px-3"}
 
-                                href={res.urlWithTextFragments || res.documentName} target="_blank">
-                                [{index + 1}] {res.documentName}
+                                href={res.urlWithTextFragments || res.documentUrl} target="_blank">
+                                [{index + 1}] {res.documentTitle}
                             </a>
                         ))
                     }
