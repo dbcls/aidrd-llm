@@ -15,8 +15,19 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 from langchain_community.callbacks.manager import get_openai_callback
 
 from langchain_openai import AzureChatOpenAI
+from ragas.metrics import LLMContextRecall, LLMContextPrecisionWithoutReference
+from ragas.dataset_schema import SingleTurnSample
+from ragas.llms import LangchainLLMWrapper
 
 dotenv.load_dotenv()
+
+
+chat_model = AzureChatOpenAI(
+    azure_deployment=os.environ.get("AZURE_DEPLOYMENT_ID"),
+    api_version="2024-05-01-preview",
+    temperature=0.4,
+    max_retries=3,
+)
 
 
 def query_to_api(query):
@@ -34,21 +45,18 @@ def query_to_api(query):
     response = requests.post(url, headers=headers, json=data).json()
     answer = response["answer"]
     if "metadata" not in response or "retriever_resources" not in response["metadata"]:
-        return answer, []
-    soucre_url_list = [
+        return answer, [], []
+    source_url_list = [
         resource["document_name"]
         for resource in response["metadata"]["retriever_resources"]
     ]
-    return answer, soucre_url_list
+    context_list = [
+        resource["content"] for resource in response["metadata"]["retriever_resources"]
+    ]
+    return answer, source_url_list, context_list
 
 
 def evaluate_by_llm(expected_answer, actual_answer):
-    chat_model = AzureChatOpenAI(
-        azure_deployment=os.environ.get("AZURE_DEPLOYMENT_ID"),
-        api_version="2024-05-01-preview",
-        temperature=0.4,
-        max_retries=3,
-    )
 
     class EvaluationResult(BaseModel):
         similarity: int = Field(description="The similarity score from 1 to 5")
@@ -90,6 +98,11 @@ Below are the details for different scores:
 
 if __name__ == "__main__":
 
+    evaluator_llm = LangchainLLMWrapper(chat_model)
+
+    context_recall_evaluator = LLMContextRecall(llm=evaluator_llm)
+    context_precision_evaluator = LLMContextPrecisionWithoutReference(llm=evaluator_llm)
+
     with get_openai_callback() as cb:
         with open("evaluation_data.json") as f:
             evaluation_data = json.load(f)
@@ -101,6 +114,8 @@ if __name__ == "__main__":
         }
         total = 0
         similarity_score_sum = 0
+        context_precision_sum = 0
+        context_recall_sum = 0
 
         # get current date and time for csv file name
         current_date_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -120,6 +135,8 @@ if __name__ == "__main__":
             "expected_answer",
             "actual_answer",
             "answer_similarity",
+            "context_precision",
+            "context_recall",
         ]
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()
@@ -129,7 +146,7 @@ if __name__ == "__main__":
             query = data["query"]
             expected_answer = data["expected_answer"]
             expected_source_url_list = data["source_url_list"]
-            actual_answer, actual_source_url_list = query_to_api(query)
+            actual_answer, actual_source_url_list, context_list = query_to_api(query)
             actual_source_url_list = list(set(actual_source_url_list))
             local_true_positive = 0
             local_false_positive = 0
@@ -156,6 +173,25 @@ if __name__ == "__main__":
             )
             answer_similarity_score = evaluate_by_llm(expected_answer, actual_answer)
             similarity_score_sum += answer_similarity_score
+
+            context_precision = context_precision_evaluator.single_turn_score(
+                SingleTurnSample(
+                    user_input=query,
+                    response=actual_answer,
+                    retrieved_contexts=context_list,
+                )
+            )
+            context_recall = context_recall_evaluator.single_turn_score(
+                SingleTurnSample(
+                    user_input=query,
+                    response=actual_answer,
+                    reference=expected_answer,
+                    retrieved_contexts=context_list,
+                )
+            )
+            context_precision_sum += context_precision
+            context_recall_sum += context_recall
+
             print(f"Query: {query}")
             print(f"Expected Source URLs: {expected_source_url_list}")
             print(f"Source URLs: {actual_source_url_list}")
@@ -163,6 +199,8 @@ if __name__ == "__main__":
             print(f"Expected Answer: {expected_answer}")
             print(f"Retrieved Answer: {actual_answer}")
             print(f"Answer Similarity Score: {answer_similarity_score}")
+            print(f"Context Precision: {context_precision}")
+            print(f"Context Recall: {context_recall}")
             print("")  # For delimiter
 
             writer.writerow(
@@ -175,6 +213,8 @@ if __name__ == "__main__":
                     "expected_answer": expected_answer,
                     "actual_answer": actual_answer,
                     "answer_similarity": answer_similarity_score,
+                    "context_precision": context_precision,
+                    "context_recall": context_recall,
                 }
             )
 
@@ -199,6 +239,8 @@ if __name__ == "__main__":
                 "expected_answer": "",
                 "actual_answer": "",
                 "answer_similarity": similarity_score_sum / total,
+                "context_precision": context_precision_sum / total,
+                "context_recall": context_recall_sum / total,
             }
         )
         csv_file.close()

@@ -8,3 +8,4 @@ jinja2
 google-search-results
 faiss-cpu==1.8.0.post1
 python-dotenv
+ragas==0.2.9
