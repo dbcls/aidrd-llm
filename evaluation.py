@@ -18,6 +18,8 @@ from langchain_openai import AzureChatOpenAI
 from ragas.metrics import LLMContextRecall, LLMContextPrecisionWithoutReference
 from ragas.dataset_schema import SingleTurnSample
 from ragas.llms import LangchainLLMWrapper
+from ragas.metrics import Faithfulness
+
 
 dotenv.load_dotenv()
 
@@ -102,6 +104,7 @@ if __name__ == "__main__":
 
     context_recall_evaluator = LLMContextRecall(llm=evaluator_llm)
     context_precision_evaluator = LLMContextPrecisionWithoutReference(llm=evaluator_llm)
+    faithfulness_evaluator = Faithfulness(llm=evaluator_llm)
 
     with get_openai_callback() as cb:
         with open("evaluation_data.json") as f:
@@ -116,6 +119,7 @@ if __name__ == "__main__":
         similarity_score_sum = 0
         context_precision_sum = 0
         context_recall_sum = 0
+        faithfulness_sum = 0
 
         # get current date and time for csv file name
         current_date_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -126,20 +130,6 @@ if __name__ == "__main__":
             newline="",
             encoding="utf-8-sig",
         )
-        fieldnames = [
-            "Number",
-            "query",
-            "expected_source_urls",
-            "actual_source_urls",
-            "source_urls_f1_score",
-            "expected_answer",
-            "actual_answer",
-            "answer_similarity",
-            "context_precision",
-            "context_recall",
-        ]
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader()
 
         for data in evaluation_data:
             total += 1
@@ -189,8 +179,17 @@ if __name__ == "__main__":
                     retrieved_contexts=context_list,
                 )
             )
+
+            faithfulness = faithfulness_evaluator.single_turn_score(
+                SingleTurnSample(
+                    user_input=query,
+                    response=actual_answer,
+                    retrieved_contexts=context_list,
+                )
+            )
             context_precision_sum += context_precision
             context_recall_sum += context_recall
+            faithfulness_sum += faithfulness
 
             print(f"Query: {query}")
             print(f"Expected Source URLs: {expected_source_url_list}")
@@ -201,22 +200,27 @@ if __name__ == "__main__":
             print(f"Answer Similarity Score: {answer_similarity_score}")
             print(f"Context Precision: {context_precision}")
             print(f"Context Recall: {context_recall}")
+            print(f"Faithfulness: {faithfulness}")
             print("")  # For delimiter
 
-            writer.writerow(
-                {
-                    "Number": total,
-                    "query": query,
-                    "expected_source_urls": "\n".join(expected_source_url_list),
-                    "actual_source_urls": "\n".join(actual_source_url_list),
-                    "source_urls_f1_score": source_f1_score,
-                    "expected_answer": expected_answer,
-                    "actual_answer": actual_answer,
-                    "answer_similarity": answer_similarity_score,
-                    "context_precision": context_precision,
-                    "context_recall": context_recall,
-                }
-            )
+            data["Number"] = total
+            data["query"] = query
+            data["expected_source_urls"] = "\n".join(expected_source_url_list)
+            data["actual_source_urls"] = "\n".join(actual_source_url_list)
+            data["source_urls_f1_score"] = source_f1_score
+            data["expected_answer"] = expected_answer
+            data["actual_answer"] = actual_answer
+            data["answer_similarity"] = answer_similarity_score
+            data["context_precision"] = context_precision
+            data["context_recall"] = context_recall
+            data["faithfulness"] = faithfulness
+
+        fieldnames = evaluation_data[0].keys()
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+
+        for data in evaluation_data:
+            writer.writerow(data)
 
         f1_score = (
             2
@@ -241,6 +245,7 @@ if __name__ == "__main__":
                 "answer_similarity": similarity_score_sum / total,
                 "context_precision": context_precision_sum / total,
                 "context_recall": context_recall_sum / total,
+                "faithfulness": faithfulness_sum / total,
             }
         )
         csv_file.close()
