@@ -112,6 +112,18 @@ const Answer: FC<IAnswerProps> = ({
             content: snippet
           }
         })
+      } else {
+        // For non-web search
+        let citationPlaces = structuredContent.citations
+        citationPlaces.sort((a: any, b: any) => b.substring_in_the_answer.length - a.substring_in_the_answer.length);  
+        citationPlaces.forEach(({ knowledge_index, substring_in_the_answer }) => {
+          let URL = citation[knowledge_index]?.document_name;
+          if(URL) {
+            URL = addTextFragments(URL, citation[knowledge_index].content);
+            const hyperlink = `[${substring_in_the_answer}[${parseInt(knowledge_index) + 1}]](${URL}) `;
+            content = content.replace(substring_in_the_answer, hyperlink);
+          }
+        });
       }
     }
   } catch (e) {
