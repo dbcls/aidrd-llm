@@ -92,27 +92,29 @@ const Answer: FC<IAnswerProps> = ({
 
   try {    
     let structuredContent = parse(content)
+    if(structuredContent.answer) {
     content = structuredContent.answer
-    if(structuredContent.contexts) {
-      citation = structuredContent.contexts.map((context: any, index) => {
-        return {
-          document_id: index,
-          document_name: context.url,
-          document_title: context.title,
-          data_source_type: "web",
-          content: webSearchResultJson[0]?.organic.find((item: any) => item.url === context.url)?.snippet || ""
-        }
-      })
-    }
-    let citationPlaces = structuredContent.citations
-    citationPlaces.sort((a: any, b: any) => b.substring_in_the_answer.length - a.substring_in_the_answer.length);  
-    citationPlaces.forEach(({ knowledge_index, substring_in_the_answer }) => {
-      const URL = citation[knowledge_index]?.document_name;
-      if(URL) {
-        const hyperlink = `[${substring_in_the_answer}[${parseInt(knowledge_index) + 1}]](${URL}) `;
-        content = content.replace(substring_in_the_answer, hyperlink);
+      if(structuredContent.contexts) {
+        citation = structuredContent.contexts.map((context: any, index) => {
+          return {
+            document_id: index,
+            document_name: context.url,
+            document_title: context.title,
+            data_source_type: "web",
+            content: webSearchResultJson[0]?.organic.find((item: any) => item.url === context.url)?.snippet || ""
+          }
+        })
       }
-    });
+      let citationPlaces = structuredContent.citations
+      citationPlaces.sort((a: any, b: any) => b.substring_in_the_answer.length - a.substring_in_the_answer.length);  
+      citationPlaces.forEach(({ knowledge_index, substring_in_the_answer }) => {
+        const URL = citation[knowledge_index]?.document_name;
+        if(URL) {
+          const hyperlink = `[${substring_in_the_answer}[${parseInt(knowledge_index) + 1}]](${URL}) `;
+          content = content.replace(substring_in_the_answer, hyperlink);
+        }
+      });
+    }
   } catch (e) {
     console.log(e);
   }
