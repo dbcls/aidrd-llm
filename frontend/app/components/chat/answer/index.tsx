@@ -16,6 +16,7 @@ import WorkflowProcess from '@/app/components/workflow/workflow-process'
 import Citation from '@/app/components/base/citation/index'
 import { Markdown } from '@/app/components/base/markdown'
 import type { Emoji } from '@/types/tools'
+import { addTextFragments } from '@/app/api/utils/common'
 
 const OperationBtn = ({ innerContent, onClick, className }: { innerContent: React.ReactNode; onClick?: () => void; className?: string }) => (
   <div
@@ -96,24 +97,22 @@ const Answer: FC<IAnswerProps> = ({
     content = structuredContent.answer
       if(structuredContent.contexts) {
         citation = structuredContent.contexts.map((context: any, index) => {
+          const substring_in_the_answer = context.substring_in_the_answer;
+          const snippet = webSearchResultJson[0]?.organic.find((item: any) => item.url === context.url)?.snippet || ""
+          const URL =  addTextFragments(context.url, snippet);          
+          const hyperlink = `[${substring_in_the_answer}[${index + 1}]](${URL}) `;
+          content = content.replace(substring_in_the_answer, hyperlink);
+          addTextFragments(context.url, substring_in_the_answer);
+
           return {
             document_id: index,
             document_name: context.url,
             document_title: context.title,
             data_source_type: "web",
-            content: webSearchResultJson[0]?.organic.find((item: any) => item.url === context.url)?.snippet || ""
+            content: snippet
           }
         })
       }
-      let citationPlaces = structuredContent.citations
-      citationPlaces.sort((a: any, b: any) => b.substring_in_the_answer.length - a.substring_in_the_answer.length);  
-      citationPlaces.forEach(({ knowledge_index, substring_in_the_answer }) => {
-        const URL = citation[knowledge_index]?.document_name;
-        if(URL) {
-          const hyperlink = `[${substring_in_the_answer}[${parseInt(knowledge_index) + 1}]](${URL}) `;
-          content = content.replace(substring_in_the_answer, hyperlink);
-        }
-      });
     }
   } catch (e) {
     console.log(e);

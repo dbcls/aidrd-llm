@@ -22,3 +22,20 @@ export const client = new ChatClient(API_KEY, API_URL || undefined)
 
 
 export const knowledgeClient = new DifyClient(KNOWLEDGE_API_KEY, API_URL || undefined)
+
+
+export const addTextFragments = (baseUrl: string, content: string) => {
+    if (!baseUrl || baseUrl.includes('#')) {
+        // すでにアンカーやテクストフラグメントが含まれている場合はそのまま返す
+        return baseUrl
+    }
+    let fragments = content.split(/ |\n/)
+    fragments = fragments.map(f => f.replaceAll('-', '')) // Safariではハイフンが含まれるとリンクが正しく動作しないようなので削除する
+    fragments = fragments.filter(f => f.length > 0)
+    let urlWithTextFragments = `${baseUrl}#:~:text=${fragments.join('&text=')}`
+    const MAX_URL_LENGTH = 4096
+    if (urlWithTextFragments.length > MAX_URL_LENGTH) {
+        urlWithTextFragments = urlWithTextFragments.slice(0, MAX_URL_LENGTH)
+    }
+    return urlWithTextFragments
+}

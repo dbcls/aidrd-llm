@@ -3,6 +3,7 @@ import type { FC } from 'react'
 import { useTranslation } from 'react-i18next'
 import s from './style.module.css'
 import type { CitationItem } from '../type'
+import { addTextFragments } from '@/app/api/utils/common'
 
 export type Resources = {
     documentId: string
@@ -19,23 +20,6 @@ type CitationProps = {
     containerClassName?: string
 }
 
-/// ヒットしたセグメントの内容を元に、URLにテキストフラグメントを追加する
-function addTextFragments(baseUrl: string, content: string) {
-    if (!baseUrl || baseUrl.includes('#')) {
-        // すでにアンカーやテクストフラグメントが含まれている場合はそのまま返す
-        return baseUrl
-    }
-    let fragments = content.split(/ |\n/)
-    fragments = fragments.map(f => f.replaceAll('-', '')) // Safariではハイフンが含まれるとリンクが正しく動作しないようなので削除する
-    fragments = fragments.filter(f => f.length > 0)
-    let urlWithTextFragments = `${baseUrl}#:~:text=${fragments.join('&text=')}`
-    const MAX_URL_LENGTH = 4096
-    if (urlWithTextFragments.length > MAX_URL_LENGTH) {
-        urlWithTextFragments = urlWithTextFragments.slice(0, MAX_URL_LENGTH)
-    }
-    return urlWithTextFragments
-}
-
 const Citation: FC<CitationProps> = ({
     data,
     byWeb = false,
@@ -47,7 +31,6 @@ const Citation: FC<CitationProps> = ({
     const [limitNumberInOneLine, setlimitNumberInOneLine] = useState(0)
     const [showMore, setShowMore] = useState(false)
     const resources = useMemo(() => data.reduce((prev: Resources[], next) => {
-        console.log(next);
         const documentId = next.document_id
         const documentUrl = next.document_name
         const documentTitle = next.document_title || next.document_name
