@@ -1326,6 +1326,7 @@ workflow:
             user: ''
           window:
             enabled: false
+            size: 50
         model:
           completion_params:
             json_schema: "{\n    \"name\": \"answer_schema\",\n    \"strict\": true,\n\
@@ -1396,18 +1397,15 @@ workflow:
 
             - Avoid answering based on information that is not included in the context.
 
-            - If you cannot answer based on the context, the resultant "answer" field
-            should be null.
-
-            - If the provided context is empty, tell the user that no information
-            is available.
+            - If you cannot answer based on the context or the provided context is
+            empty, the resultant "answer" field should be null.
 
             - Avoid mentioning that you obtained the information from the context.
 
             And answer according to the language of the user''s question.
 
             </constraint>'
-        selected: true
+        selected: false
         title: LLM
         type: llm
         vision:
@@ -1418,11 +1416,11 @@ workflow:
       id: llm
       position:
         x: 1748.2565967896737
-        y: 463.7638496812961
+        y: 461.1578838004969
       positionAbsolute:
         x: 1748.2565967896737
-        y: 463.7638496812961
-      selected: true
+        y: 461.1578838004969
+      selected: false
       type: custom
       width: 244
     - data:
@@ -3679,6 +3677,14 @@ workflow:
           enabled: false
           variable_selector: []
         desc: ''
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
         model:
           completion_params:
             frequency_penalty: 0.5
@@ -3729,14 +3735,6 @@ workflow:
             and return them as a dictionary.
 
             </task_instruction>
-
-
-            <question>
-
-            {{#sys.query#}}
-
-            </question>
-
 
 
             <context>
@@ -3860,10 +3858,10 @@ workflow:
       height: 53
       id: '1735634278277'
       position:
-        x: 3241.661440822429
+        x: 3242.574696633479
         y: 241.96990061475765
       positionAbsolute:
-        x: 3241.661440822429
+        x: 3242.574696633479
         y: 241.96990061475765
       selected: false
       sourcePosition: right
@@ -3875,6 +3873,14 @@ workflow:
           enabled: false
           variable_selector: []
         desc: ''
+        memory:
+          query_prompt_template: '{{#sys.query#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
         model:
           completion_params:
             temperature: 0.7
@@ -3886,19 +3892,12 @@ workflow:
           role: system
           text: '<task_instruction>
 
-            Generate a query for web search to answer the question about intractable
+            Generate a keyword for web search to answer the user query about intractable
             disease and its support information in the specified prefecture.
 
             The output should be only the query and must not include any other words.
 
             </task_instruction>
-
-
-            <question>
-
-            {{#sys.query#}}
-
-            </question>
 
 
             <prefecture>
@@ -3922,12 +3921,12 @@ workflow:
       positionAbsolute:
         x: 2702.1315739625024
         y: 252.69788297871804
-      selected: false
+      selected: true
       sourcePosition: right
       targetPosition: left
       type: custom
       width: 244
     viewport:
-      x: -871.6520282650001
-      y: 84.97975188961954
-      zoom: 0.5899756409775271
+      x: -1614.9142008829776
+      y: 137.99531869106457
+      zoom: 0.6664393283391143
