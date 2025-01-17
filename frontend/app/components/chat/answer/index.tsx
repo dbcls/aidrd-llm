@@ -101,6 +101,11 @@ const Answer: FC<IAnswerProps> = ({
           const snippet = webSearchResultJson[0]?.organic.find((item: any) => item.url === context.url)?.snippet || ""
           const URL =  addTextFragments(context.url, snippet);          
           const hyperlink = `[${substring_in_the_answer}[${index + 1}]](${URL}) `;
+
+          if(!content.includes(substring_in_the_answer)) {
+            return null;
+          }
+
           content = content.replace(substring_in_the_answer, hyperlink);
           addTextFragments(context.url, substring_in_the_answer);
 
@@ -111,19 +116,22 @@ const Answer: FC<IAnswerProps> = ({
             data_source_type: "web",
             content: snippet
           }
-        })
+        }).filter((item: any) => item !== null);
       } else {
         // For non-web search
         let citationPlaces = structuredContent.citations
         citationPlaces.sort((a: any, b: any) => b.substring_in_the_answer.length - a.substring_in_the_answer.length);  
+        let usedCitations = [];
         citationPlaces.forEach(({ knowledge_index, substring_in_the_answer }) => {
           let URL = citation[knowledge_index]?.document_name;
-          if(URL) {
+          if(URL && content.includes(substring_in_the_answer)) {
             URL = addTextFragments(URL, citation[knowledge_index].content);
             const hyperlink = `[${substring_in_the_answer}[${parseInt(knowledge_index) + 1}]](${URL}) `;
             content = content.replace(substring_in_the_answer, hyperlink);
+            usedCitations.push(citation[knowledge_index]);
           }
         });
+        citation = usedCitations;
       }
     }
   } catch (e) {
