@@ -125,13 +125,27 @@ docker-compose restart
 ```
 
 - Run the evaluation script
-  - The evaluation data should be located in evaluation_data.json
+  - The evaluation data should be CSV or JSON. The required fields are `query`, `expected_answer`. The optional field is `source_url_list`.
 
 ```
-docker-compose exec app python evaluation.py
+docker-compose exec app python evaluation.py <path_to_your_evaluation_data>
 ```
 
 - The evaluation results will be located in `evaluation_results_<timestamp>.json`
+
+## Test data generation
+
+- To create test data for the evaluation from a document automatically, run the following command :
+
+```
+docker compose exec app python generate_test_data.py <path_to_your_document> -o <output_file_name>
+```
+
+- If you want to generate test data in Japanese, add `--use_japanese` option.
+
+```
+docker compose exec app python generate_test_data.py --use_japanese <path_to_your_document> -o <output_file_name>
+```
 
 ## Known problems and solutions
 
