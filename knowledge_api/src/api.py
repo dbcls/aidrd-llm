@@ -78,9 +78,13 @@ async def retrieval(
 
     result = [
         {
-            "content": doc.page_content,
+            "content": (
+                "".join(doc.metadata["extended_chunks"])
+                if "extended_chunks" in doc.metadata
+                else doc.page_content
+            ),
             "score": float(score),
-            "title": doc.metadata.get("title") or "",
+            "title": doc.metadata.get("source"),
             "metadata": doc.metadata,
         }
         for doc, score in docs

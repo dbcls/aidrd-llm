@@ -6,6 +6,7 @@ from langchain_community.document_loaders import DirectoryLoader
 from langchain.docstore.document import Document
 import csv
 import dotenv
+from langchain_text_splitters.character import RecursiveCharacterTextSplitter
 from langchain_openai import AzureOpenAIEmbeddings
 
 
@@ -13,22 +14,28 @@ dotenv.load_dotenv(override=True)
 
 
 def create_vector_store(
-    document_dir_path: str, max_chunk_size=2000, preffered_chunk_size=500
+    document_dir_path: str,
+    max_chunk_size=600,
+    extended_chunk_nums=1,
 ) -> FAISS:
     embeddings = AzureOpenAIEmbeddings(
         azure_deployment=os.environ["AZURE_EMBEDDING_DEPLOYMENT_ID"]
     )
     loader = DirectoryLoader(
         document_dir_path,
-        loader_kwargs={
-            "chunking_strategy": "basic",
-            "max_characters": max_chunk_size,
-            "new_after_n_chars": preffered_chunk_size,
-        },
     )
     print("Loading documents...")
-    docs = loader.load()
+    docs = loader.load_and_split(
+        RecursiveCharacterTextSplitter(
+            chunk_size=max_chunk_size,
+        )
+    )
     print(f"Loaded {len(docs)} documents.")
+    for i, doc in enumerate(docs):
+        doc.metadata["extended_chunks"] = []
+        for j in range(i - extended_chunk_nums, i + extended_chunk_nums + 1):
+            if j >= 0 and j < len(docs):
+                doc.metadata["extended_chunks"].append(docs[j].page_content)
     return FAISS.from_documents(docs, embeddings)
 
 
@@ -40,13 +47,14 @@ if __name__ == "__main__":
         "document_dir_path", type=str, help="Path to the directory of documents."
     )
     parser.add_argument(
-        "--max-chunk-size", type=int, default=2000, help="Maximum size of each chunk."
+        "--max-chunk-size", type=int, default=600, help="Maximum size of each chunk."
     )
     parser.add_argument(
-        "--preferred-chunk-size",
+        "--extended-chunk-nums",
         type=int,
-        default=500,
-        help="Preferred size of each chunk.",
+        default=1,
+        help="The number of consecutive chunks that will be saved in the metadata named 'extended_chunks'. For example, if this value is 2, the two chunks before and after each chunk will be saved in the metadata."
+        "This is useful to consider longer context for each chunk.",
     )
     parser.add_argument(
         "--output-path",
@@ -61,7 +69,7 @@ if __name__ == "__main__":
     vector_store = create_vector_store(
         args.document_dir_path,
         max_chunk_size=args.max_chunk_size,
-        preffered_chunk_size=args.preferred_chunk_size,
+        extended_chunk_nums=args.extended_chunk_nums,
     )
     vector_store.save_local(vector_store_path)
     print(f"Vector store saved at {vector_store_path}")
