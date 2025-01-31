@@ -2,6 +2,7 @@ import uvicorn
 import dotenv
 from pydantic import BaseModel, Field
 import os
+import sys
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.responses import JSONResponse
 from fastapi.security import APIKeyHeader
@@ -79,7 +80,7 @@ async def retrieval(
         {
             "content": doc.page_content,
             "score": float(score),
-            "title": doc.metadata.get("title"),
+            "title": doc.metadata.get("title") or "",
             "metadata": doc.metadata,
         }
         for doc, score in docs
