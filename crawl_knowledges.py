@@ -2,169 +2,155 @@ import requests
 import json
 import argparse
 import os
+import re
 import traceback
+import markdown
+from bs4 import BeautifulSoup
 from datetime import datetime
 from time import sleep
+from firecrawl import FirecrawlApp
+
 
 headers = {"Content-Type": "application/json"}
 
 
-def scrape_single_page(url, base_url=""):
+def scrape_doc_file(url, base_url=""):
     # Define the payload
     try:
         response = requests.get(url, timeout=(10, 30))
-        if response.status_code != 200 and base_url != "":
-            # Firecrawlが返してくるlinksOnPageは、
-            # 例えば"https://www.example.com/page.html" の中に
-            # "a/b.pdf" というリンクがある場合、
-            # "https://www.example.com/page.html/a/b.pdf" という形で返ってくる。
-            # これは正しくない場合があり、"https://www.example.com/a/b.pdf" という形に修正する必要があるため、base_urlを使って修正してリトライする。
-            base_url_without_last_segment = "/".join(base_url.split("/")[:-1])
-            retry_url = base_url_without_last_segment + url.replace(base_url, "")
-            print("Trial failed. Retrying with the corrected URL:", retry_url)
-            return scrape_single_page(retry_url)
     except Exception as e:
         print(f"An error occurred: {e}")
         return None, None
     return response, url
 
 
+def extract_links_from_html(html):
+    soup = BeautifulSoup(html, "html.parser")
+
+    links = []
+    for a_tag in soup.find_all("a"):
+        text = a_tag.text.strip()
+        if not text and a_tag.find("img"):
+            # imgタグからalt属性が取得できるのであれば取得する
+            text = a_tag.find("img").get("alt")
+        links.append({"text": text, "url": a_tag.get("href")})
+
+    return links
+
+
+def get_base_url(url: str) -> str:
+    """
+    指定されたURLから最後のパスセグメントを削除し、ベースURLを取得する。
+
+    :param url: 入力URL
+    :return: 最後のパスセグメントを除いたベースURL
+    """
+    if url.endswith("/"):
+        url = url.rstrip("/")
+
+    base_url = url.rsplit("/", 1)[0]
+    return base_url
+
+
 def crawl_pages(
-    start_url, max_page_count, max_depth, firecrawl_host, allow_backward_crawling
+    start_url,
+    max_page_count,
+    max_depth,
+    firecrawl_host,
+    allow_backward_crawling,
+    crawling_purpose,
 ):
-    if not firecrawl_host.endswith("/"):
-        endpoint = f"{firecrawl_host}/v0/crawl"
-    else:
-        endpoint = f"{firecrawl_host}v0/crawl"
+    app = FirecrawlApp(api_url=firecrawl_host)
     unique_id = datetime.now().strftime("%Y%m%d%H%M%S")
     file_download_dir = f"downloaded_files/{unique_id}"
     os.makedirs(file_download_dir, exist_ok=True)
+    base_url = get_base_url(start_url)
     file_download_count = 0
+    traversed_urls = set()
+    scraping_results = []
     try:
-        # Define the payload
-        payload = {
-            "url": start_url,
-            "limit": max_page_count,
-            "crawlerOptions": {
-                "limit": max_page_count,
-                "maxDepth": max_depth,
-                "allowBackwardCrawling": allow_backward_crawling,
-                "excludes": [".*\.pdf$", ".*\.docx$", ".*\.xlsx$", ".*\.xls$"],
-            },
-            "pageOptions": {
-                "replaceAllPathsWithAbsolutePaths": True,
-            },
-        }
-        print(payload)
+        url_stack = [(start_url, 0)]
+        while len(url_stack) > 0 and len(traversed_urls) < max_page_count:
+            target_url, depth = url_stack.pop(0)
+            if depth > max_depth or target_url in traversed_urls:
+                continue
+            print(f"Scraping file: {target_url}")
+            doc_file_extensions = ["pdf", "docx", "xlsx", "xls"]
+            traversed_urls.add(target_url)
 
-        # Send the POST request
-        response = requests.post(endpoint, headers=headers, data=json.dumps(payload))
-        result = None
-        # Check if the request was successful
-        if response.status_code == 200:
-            print("Crawling started successfully.")
-            result = response.json()
-            job_id = result["jobId"]
-            print(f"Job ID: {job_id}")
-            while True:
-                sleep(1)
-                response = requests.get(f"{endpoint}/status/{job_id}")
-                if response.status_code == 200:
-                    status = response.json()
-                    if status["status"] == "completed":
-                        print(
-                            f"Crawling completed : {status['current']} / {status['total']}"
-                        )
-                        result_for_html = status["data"]
-                        if len(result_for_html) < max_page_count:
-                            traversed_urls = [
-                                page["metadata"]["sourceURL"]
-                                for page in result_for_html
-                                if page
-                                and "metadata" in page
-                                and "sourceURL" in page["metadata"]
-                            ]
-                            traversed_urls = set(traversed_urls)
-                            base_url_list = result_for_html.copy()
-                            # Scrape files other than HTMLs
-                            for i, page in enumerate(base_url_list):
-                                print(
-                                    f"Scraping files from page {i+1} / {len(base_url_list)}"
-                                )
-                                if "linksOnPage" not in page:
-                                    continue
-                                for link in page["linksOnPage"]:
-                                    if len(result_for_html) >= max_page_count:
-                                        break
-                                    if link in traversed_urls:
-                                        continue
-                                    target_extensions = ["pdf", "docx", "xlsx", "xls"]
-                                    if any(
-                                        [
-                                            link.lower().endswith(ext)
-                                            for ext in target_extensions
-                                        ]
-                                    ):
-                                        file_url = link
-                                        print(f"Scraping file: {file_url}")
-                                        response, file_url = scrape_single_page(
-                                            file_url,
-                                            base_url=page["metadata"]["sourceURL"],
-                                        )
-                                        if response is None:
-                                            print("Failed to scrape the file.")
-                                        else:
-                                            print(
-                                                f"Response status code: {response.status_code}"
-                                            )
-                                        if (
-                                            response is not None
-                                            and response.status_code == 200
-                                        ):
-                                            file_download_count += 1
-                                            file_name = f"{file_download_count}_{file_url.split('/')[-1]}"
-                                            file_path = os.path.join(
-                                                file_download_dir, file_name
-                                            )
-                                            print(f"Saving file to: {file_path}")
-                                            with open(file_path, "wb") as f:
-                                                f.write(response.content)
-                                            result_for_html.append(
-                                                {
-                                                    "content": None,
-                                                    "provider": "simple-download",
-                                                    "metadata": {
-                                                        "sourceURL": file_url,
-                                                        "filePath": file_path,
-                                                    },
-                                                }
-                                            )
-                                    traversed_urls.add(link)
-                                if len(result_for_html) >= max_page_count:
-                                    break
-                        return result_for_html
-                        # TODO: scrape other files: docx, xlsx, etc.
-                    elif status["status"] == "failed":
-                        print("Crawling failed.")
-                        return {}
-                    else:
-                        if "current" in status and "total" in status:
-                            print(
-                                f"Current progres: {status['current']} / {status['total']}"
-                            )
+            if any([target_url.lower().endswith(ext) for ext in doc_file_extensions]):
+                file_url = link
+                response, file_url = scrape_doc_file(file_url)
+                if response is None:
+                    print("Failed to scrape the file.")
                 else:
-                    print(
-                        f"Failed to get job status. Status code: {response.status_code}"
+                    print(f"Response status code: {response.status_code}")
+                if response is not None and response.status_code == 200:
+                    file_name = f"{file_download_count}_{file_url.split('/')[-1]}"
+                    file_path = os.path.join(file_download_dir, file_name)
+                    print(f"Saving file to: {file_path}")
+                    with open(file_path, "wb") as f:
+                        f.write(response.content)
+                    scraping_results.append(
+                        {
+                            "content": None,
+                            "provider": "simple-download",
+                            "metadata": {
+                                "sourceURL": file_url,
+                                "filePath": file_path,
+                            },
+                        }
                     )
-                    return {}
-
-        else:
-            print(f"Failed to start crawling. Status code: {response.status_code}")
-            print("Response:", response.text)
-            return {}
+            else:
+                response = app.scrape_url(
+                    url=target_url,
+                    params={
+                        "formats": ["markdown", "html"],
+                    },
+                )
+                """
+                Example response:
+                {
+                "markdown": "# Example Domain\n\nThis domain is for use in illustrative examples in documents. You may use this\ndomain in literature without prior coordination or asking for permission.\n\n[More information...](https://www.iana.org/domains/example)",
+                "html": "...",
+                "metadata": {
+                    "title": "Example Domain",
+                    "viewport": "width=device-width, initial-scale=1",
+                    "scrapeId": "35740f4a-3107-456a-885a-754d88add4b6",
+                    "sourceURL": "https://example.com",
+                    "url": "https://example.com/",
+                    "statusCode": 200
+                },
+                "scrape_id": "35740f4a-3107-456a-885a-754d88add4b6"
+                }
+                """
+                result_markdown = response["markdown"]
+                links = extract_links_from_html(response["html"])
+                for link in links:
+                    # TODO: evaluate relevance of the link
+                    # TODO: use max_depth to limit the depth of the crawl
+                    if allow_backward_crawling or link["url"].startswith(base_url):
+                        canonical_url = (
+                            link["url"][:-1]
+                            if link["url"].endswith("/")
+                            else link["url"]
+                        )
+                        url_stack.append((canonical_url, depth + 1))
+                scraping_results.append(
+                    {
+                        "content": result_markdown,
+                        "provider": "firecrawl",
+                        "metadata": response["metadata"],
+                    }
+                )
+            file_download_count += 1
+            print(f"Crawling completed : {file_download_count} / {max_page_count}.")
+            if file_download_count >= max_page_count:
+                break
+        return scraping_results
     except Exception as e:
         print(f"An error occurred: {e}\n{traceback.format_exc()}")
-        return {}
+        return scraping_results
 
 
 def parse_arguments():
@@ -195,6 +181,12 @@ def parse_arguments():
         action="store_true",
         help="Allow external content links",
     )
+    parser.add_argument(
+        "--crawling-purpose",
+        type=str,
+        default="",
+        help="The purpose of crawling the pages. This will be used to filter the results using LLM",
+    )
     return parser.parse_args()
 
 
@@ -210,6 +202,7 @@ if __name__ == "__main__":
         args.max_depth,
         args.firecrawl_host,
         args.allow_backward_crawling,
+        args.crawling_purpose,
     )
 
     # If the directory does not exist, create it
