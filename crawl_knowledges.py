@@ -1,6 +1,7 @@
 import requests
 import json
 import argparse
+import dotenv
 import os
 import re
 import traceback
@@ -8,10 +9,19 @@ import markdown
 from bs4 import BeautifulSoup
 from datetime import datetime
 from time import sleep
+from pydantic import BaseModel
 from firecrawl import FirecrawlApp
-
+from langchain_openai import AzureChatOpenAI
 
 headers = {"Content-Type": "application/json"}
+
+dotenv.load_dotenv()
+
+chat_model = AzureChatOpenAI(
+    azure_deployment=os.environ.get("AZURE_DEPLOYMENT_ID"),
+    temperature=0.4,
+    max_retries=3,
+)
 
 
 def scrape_doc_file(url, base_url=""):
@@ -52,6 +62,49 @@ def get_base_url(url: str) -> str:
     return base_url
 
 
+class RelevanceCheckResult(BaseModel):
+    is_relevant: bool
+
+
+def check_relevance_of_content(markdown_content, purpose):
+
+    task_instruction = f"""
+<task_instruction>
+Check the relevance of the following text with the theme of "{purpose}".
+If relevant, return True. Otherwise, return False.
+If you are unable to determine the relevance, return True.
+</task_instruction>
+
+<text>
+{markdown_content}
+</text>
+"""
+    print("task_instruction", task_instruction)
+
+    return chat_model.with_structured_output(RelevanceCheckResult).invoke(
+        task_instruction
+    )["is_relevant"]
+
+
+def check_relevance_of_url(url, purpose):
+
+    task_instruction = f"""
+# Task Instruction
+Check the relevance of the following URL for the theme of "{purpose}".
+If the URL is relevant, return True. Otherwise, return False.
+If you are unable to determine the relevance, return True.
+
+# URL
+{url}
+"""
+
+    print("task_instruction", task_instruction)
+
+    return chat_model.with_structured_output(RelevanceCheckResult).invoke(
+        task_instruction
+    )["is_relevant"]
+
+
 def crawl_pages(
     start_url,
     max_page_count,
@@ -68,6 +121,7 @@ def crawl_pages(
     file_download_count = 0
     traversed_urls = set()
     scraping_results = []
+    irrelevant_urls = []
     try:
         url_stack = [(start_url, 0)]
         while len(url_stack) > 0 and len(traversed_urls) < max_page_count:
@@ -126,16 +180,29 @@ def crawl_pages(
                 """
                 result_markdown = response["markdown"]
                 links = extract_links_from_html(response["html"])
+
+                if crawling_purpose:
+                    relevance = check_relevance_of_content(
+                        result_markdown, crawling_purpose
+                    )
+                    if not relevance:
+                        print(f"Skipping irrelevant content: {target_url}")
+                        irrelevant_urls.append(target_url)
+                        continue
+
                 for link in links:
-                    # TODO: evaluate relevance of the link
-                    # TODO: use max_depth to limit the depth of the crawl
-                    if allow_backward_crawling or link["url"].startswith(base_url):
-                        canonical_url = (
-                            link["url"][:-1]
-                            if link["url"].endswith("/")
-                            else link["url"]
-                        )
-                        url_stack.append((canonical_url, depth + 1))
+                    url = link["url"]
+
+                    if allow_backward_crawling or url.startswith(base_url):
+                        if not crawling_purpose or check_relevance_of_url(
+                            url, crawling_purpose
+                        ):
+                            canonical_url = url[:-1] if url.endswith("/") else url
+                            url_stack.append((canonical_url, depth + 1))
+                        else:
+                            print(f"Skipping irrelevant URL: {url}")
+                            irrelevant_urls.append(url)
+
                 scraping_results.append(
                     {
                         "content": result_markdown,
@@ -147,10 +214,10 @@ def crawl_pages(
             print(f"Crawling completed : {file_download_count} / {max_page_count}.")
             if file_download_count >= max_page_count:
                 break
-        return scraping_results
+        return scraping_results, irrelevant_urls
     except Exception as e:
         print(f"An error occurred: {e}\n{traceback.format_exc()}")
-        return scraping_results
+        return scraping_results, irrelevant_urls
 
 
 def parse_arguments():
@@ -196,7 +263,7 @@ if __name__ == "__main__":
     output_file = args.output_file
 
     # Call the function to start crawling
-    result_json = crawl_pages(
+    result_json, irrelevant_urls = crawl_pages(
         start_url,
         args.max_page_count,
         args.max_depth,
@@ -210,3 +277,8 @@ if __name__ == "__main__":
     if dir_name != "":
         os.makedirs(os.path.dirname(output_file), exist_ok=True)
     json.dump(result_json, open(output_file, "w"), indent=2)
+
+    if irrelevant_urls:
+        print("The following URLs were found to be irrelevant:")
+        for url in irrelevant_urls:
+            print(url)
