@@ -26,7 +26,6 @@ dotenv.load_dotenv()
 
 chat_model = AzureChatOpenAI(
     azure_deployment=os.environ.get("AZURE_DEPLOYMENT_ID"),
-    api_version="2024-05-01-preview",
     temperature=0.4,
     max_retries=3,
 )
