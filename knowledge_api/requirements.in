@@ -8,3 +8,4 @@ unstructured[pdf]
 fastapi
 uvicorn
 pyngrok
+firecrawl
