@@ -125,13 +125,20 @@ const Answer: FC<IAnswerProps> = ({
         citationPlaces.forEach(({ knowledge_index, substring_in_the_answer }) => {
           let URL = citation[knowledge_index]?.document_name;
           if(URL && content.includes(substring_in_the_answer)) {
-            URL = addTextFragments(URL, citation[knowledge_index].content);
-            const hyperlink = `[${substring_in_the_answer}[${parseInt(knowledge_index) + 1}]](${URL}) `;
-            content = content.replace(substring_in_the_answer, hyperlink);
             usedCitations.push(citation[knowledge_index]);
           }
         });
         citation = usedCitations;
+        citationPlaces.forEach(({ knowledge_index, substring_in_the_answer }) => {
+          let URL = citation[knowledge_index]?.document_name;          
+          if(URL && content.includes(substring_in_the_answer)) {
+            knowledge_index = parseInt(knowledge_index);
+            const used_knowledge_index = usedCitations.findIndex((item) => item === citation[knowledge_index]);
+            URL = addTextFragments(URL, citation[knowledge_index].content);
+            const hyperlink = `[${substring_in_the_answer}[${parseInt(used_knowledge_index) + 1}]](${URL}) `;
+            content = content.replace(substring_in_the_answer, hyperlink);
+          }
+        });
       }
     }
   } catch (e) {
