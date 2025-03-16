@@ -59,9 +59,15 @@ embeddings = AzureOpenAIEmbeddings(
     azure_deployment=os.environ["AZURE_EMBEDDING_DEPLOYMENT_ID"]
 )
 
-vector_store = FAISS.load_local(
-    os.environ["VECTOR_STORE_PATH"], embeddings, allow_dangerous_deserialization=True
-)
+vector_store_path = os.environ["VECTOR_STORE_PATH"]
+if not os.path.exists(vector_store_path):
+    vector_store = FAISS.from_documents([], embeddings)
+else:
+    vector_store = FAISS.load_local(
+        os.environ["VECTOR_STORE_PATH"],
+        embeddings,
+        allow_dangerous_deserialization=True,
+    )
 
 
 #
