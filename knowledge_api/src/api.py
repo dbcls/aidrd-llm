@@ -61,7 +61,10 @@ embeddings = AzureOpenAIEmbeddings(
 
 vector_store_path = os.environ["VECTOR_STORE_PATH"]
 if not os.path.exists(vector_store_path):
-    vector_store = FAISS.from_documents([], embeddings)
+    vector_store = None
+    print(
+        f"Vector store not found at {vector_store_path}. Import document before using this API."
+    )
 else:
     vector_store = FAISS.load_local(
         os.environ["VECTOR_STORE_PATH"],
@@ -78,6 +81,13 @@ async def retrieval(
     request: RequestBody,
     token: str = Depends(verify_token),
 ):
+    if vector_store is None:
+        return JSONResponse(
+            content={
+                "message": "Vector store is not found. Import document before using this API."
+            },
+            status_code=400,
+        )
     docs = vector_store.similarity_search_with_score(
         request.query, top_k=request.retrieval_setting.top_k
     )
