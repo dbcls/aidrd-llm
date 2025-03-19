@@ -167,3 +167,6 @@ downloaded_pdfs/
 evaluations/
 .DS_Store
 tmp
+
+.python-version
+.langchain.db
