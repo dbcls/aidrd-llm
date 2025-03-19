@@ -12,6 +12,8 @@ from time import sleep
 from pydantic import BaseModel
 from firecrawl import FirecrawlApp
 from langchain_openai import AzureChatOpenAI
+from langchain_community.cache import SQLiteCache
+from langchain.globals import set_llm_cache
 
 headers = {"Content-Type": "application/json"}
 
@@ -67,6 +69,9 @@ class RelevanceCheckResult(BaseModel):
 
 
 def check_relevance_of_content(markdown_content, purpose):
+    MAX_LENGTH = 10000
+    if len(markdown_content) > MAX_LENGTH:
+        markdown_content = markdown_content[:MAX_LENGTH]
 
     task_instruction = f"""
 <task_instruction>
@@ -79,14 +84,13 @@ If you are unable to determine the relevance, return True.
 {markdown_content}
 </text>
 """
-    print("task_instruction", task_instruction)
 
     return chat_model.with_structured_output(RelevanceCheckResult).invoke(
         task_instruction
     )["is_relevant"]
 
 
-def check_relevance_of_url(url, purpose):
+def check_relevance_of_url(url, purpose, link_title=None):
 
     task_instruction = f"""
 # Task Instruction
@@ -97,8 +101,8 @@ If you are unable to determine the relevance, return True.
 # URL
 {url}
 """
-
-    print("task_instruction", task_instruction)
+    if link_title:
+        task_instruction += f"\n# Title\n{link_title}"
 
     return chat_model.with_structured_output(RelevanceCheckResult).invoke(
         task_instruction
@@ -112,6 +116,7 @@ def crawl_pages(
     firecrawl_host,
     allow_backward_crawling,
     crawling_purpose,
+    max_link_per_page,
 ):
     app = FirecrawlApp(api_url=firecrawl_host)
     unique_id = datetime.now().strftime("%Y%m%d%H%M%S")
@@ -122,16 +127,16 @@ def crawl_pages(
     traversed_urls = set()
     scraping_results = []
     irrelevant_urls = []
-    try:
-        url_stack = [(start_url, 0)]
-        while len(url_stack) > 0 and len(traversed_urls) < max_page_count:
-            target_url, depth = url_stack.pop(0)
-            if depth > max_depth or target_url in traversed_urls:
-                continue
-            print(f"Scraping file: {target_url}")
-            doc_file_extensions = ["pdf", "docx", "xlsx", "xls"]
-            traversed_urls.add(target_url)
+    url_queue = [(start_url, 0)]
+    while len(url_queue) > 0 and len(traversed_urls) < max_page_count:
+        target_url, depth = url_queue.pop(0)
+        if depth > max_depth or target_url in traversed_urls:
+            continue
+        print(f"Scraping file: {target_url}")
+        doc_file_extensions = ["pdf", "docx", "xlsx", "xls"]
+        traversed_urls.add(target_url)
 
+        try:
             if any([target_url.lower().endswith(ext) for ext in doc_file_extensions]):
                 file_url = link
                 response, file_url = scrape_doc_file(file_url)
@@ -190,15 +195,21 @@ def crawl_pages(
                         irrelevant_urls.append(target_url)
                         continue
 
+                link_count = 0
                 for link in links:
                     url = link["url"]
-
+                    if url in traversed_urls:
+                        continue
+                    link_count += 1
+                    if link_count > max_link_per_page:
+                        break
                     if allow_backward_crawling or url.startswith(base_url):
                         if not crawling_purpose or check_relevance_of_url(
-                            url, crawling_purpose
+                            url, crawling_purpose, link["text"]
                         ):
                             canonical_url = url[:-1] if url.endswith("/") else url
-                            url_stack.append((canonical_url, depth + 1))
+                            print(f"Adding URL to queue: {canonical_url}")
+                            url_queue.append((canonical_url, depth + 1))
                         else:
                             print(f"Skipping irrelevant URL: {url}")
                             irrelevant_urls.append(url)
@@ -214,10 +225,10 @@ def crawl_pages(
             print(f"Crawling completed : {file_download_count} / {max_page_count}.")
             if file_download_count >= max_page_count:
                 break
-        return scraping_results, irrelevant_urls
-    except Exception as e:
-        print(f"An error occurred: {e}\n{traceback.format_exc()}")
-        return scraping_results, irrelevant_urls
+        except Exception as e:
+            print(f"An error occurred. skipping...: {e}\n{traceback.format_exc()}")
+            continue
+    return scraping_results, irrelevant_urls
 
 
 def parse_arguments():
@@ -254,6 +265,12 @@ def parse_arguments():
         default="",
         help="The purpose of crawling the pages. This will be used to filter the results using LLM",
     )
+    parser.add_argument(
+        "--max-link-per-page",
+        type=int,
+        default=20,
+        help="The maximum number of links to follow per page",
+    )
     return parser.parse_args()
 
 
@@ -270,13 +287,15 @@ if __name__ == "__main__":
         args.firecrawl_host,
         args.allow_backward_crawling,
         args.crawling_purpose,
+        args.max_link_per_page,
     )
 
     # If the directory does not exist, create it
     dir_name = os.path.dirname(output_file)
     if dir_name != "":
         os.makedirs(os.path.dirname(output_file), exist_ok=True)
-    json.dump(result_json, open(output_file, "w"), indent=2)
+    json.dump(result_json, open(output_file, "w"), indent=2, ensure_ascii=False)
+    set_llm_cache(SQLiteCache(database_path=".langchain.db"))
 
     if irrelevant_urls:
         print("The following URLs were found to be irrelevant:")
