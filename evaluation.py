@@ -6,6 +6,7 @@ import csv
 from datetime import datetime
 import dotenv
 import os
+import sys
 
 from typing import List, Tuple
 
@@ -19,6 +20,7 @@ from ragas.metrics import LLMContextRecall, LLMContextPrecisionWithoutReference
 from ragas.dataset_schema import SingleTurnSample
 from ragas.llms import LangchainLLMWrapper
 from ragas.metrics import Faithfulness
+import argparse
 
 
 dotenv.load_dotenv()
@@ -104,11 +106,42 @@ if __name__ == "__main__":
     context_recall_evaluator = LLMContextRecall(llm=evaluator_llm)
     context_precision_evaluator = LLMContextPrecisionWithoutReference(llm=evaluator_llm)
     faithfulness_evaluator = Faithfulness(llm=evaluator_llm)
+    parser = argparse.ArgumentParser(
+        description="Evaluate the accuracy of retrieval using dataset."
+    )
+    parser.add_argument(
+        "input_file_name", type=str, help="The input file name (json or csv)."
+    )
+    parser.add_argument(
+        "--chatbot-api-key",
+        type=str,
+        default=None,
+        help="The API key for the chatbot.",
+    )
+    parser.add_argument(
+        "--max-rows",
+        type=int,
+        default=None,
+        help="The maximum number of rows to process from the input file.",
+    )
+    args = parser.parse_args()
+
+    input_file_name = args.input_file_name
+    if args.chatbot_api_key:
+        os.environ["CHATBOT_API_KEY"] = args.chatbot_api_key
 
     with get_openai_callback() as cb:
-        with open("evaluation_data.json") as f:
-            evaluation_data = json.load(f)
+        with open(input_file_name, encoding="utf-8-sig") as f:
+            if input_file_name.endswith(".json"):
+                evaluation_data = json.load(f)
+            elif input_file_name.endswith(".csv"):
+                reader = csv.DictReader(f)
+                evaluation_data = list(reader)
+            else:
+                raise ValueError("Input file must be either a json file or a csv file.")
 
+        if args.max_rows:
+            evaluation_data = evaluation_data[: args.max_rows]
         source_url_accuracy = {
             "true_positive": 0,
             "false_positive": 0,
@@ -123,8 +156,9 @@ if __name__ == "__main__":
         # get current date and time for csv file name
         current_date_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
+        output_file_name = f"evaluation_results_{current_date_time}.csv"
         csv_file = open(
-            f"evaluation_results_{current_date_time}.csv",
+            output_file_name,
             mode="w",
             newline="",
             encoding="utf-8-sig",
@@ -134,7 +168,10 @@ if __name__ == "__main__":
             total += 1
             query = data["query"]
             expected_answer = data["expected_answer"]
-            expected_source_url_list = data["source_url_list"]
+            if "source_url_list" not in data:
+                expected_source_url_list = []
+            else:
+                expected_source_url_list = data["source_url_list"]
             actual_answer, actual_source_url_list, context_list = query_to_api(query)
             actual_source_url_list = list(set(actual_source_url_list))
             local_true_positive = 0
@@ -151,15 +188,18 @@ if __name__ == "__main__":
             source_url_accuracy["true_positive"] += local_true_positive
             source_url_accuracy["false_positive"] += local_false_positive
             source_url_accuracy["false_negative"] += local_false_negative
-            source_f1_score = (
-                2
-                * local_true_positive
-                / (
-                    2 * local_true_positive
-                    + local_false_positive
-                    + local_false_negative
+            if len(expected_source_url_list) > 0:
+                source_f1_score = (
+                    2
+                    * local_true_positive
+                    / (
+                        2 * local_true_positive
+                        + local_false_positive
+                        + local_false_negative
+                    )
                 )
-            )
+            else:
+                source_f1_score = 0
             answer_similarity_score = evaluate_by_llm(expected_answer, actual_answer)
             similarity_score_sum += answer_similarity_score
 
@@ -191,8 +231,9 @@ if __name__ == "__main__":
             faithfulness_sum += faithfulness
 
             print(f"Query: {query}")
-            print(f"Expected Source URLs: {expected_source_url_list}")
-            print(f"Source URLs: {actual_source_url_list}")
+            if len(expected_source_url_list) > 0:
+                print(f"Expected Source URLs: {expected_source_url_list}")
+                print(f"Source URLs: {actual_source_url_list}")
             print(f"Source F1 Score: {source_f1_score}")
             print(f"Expected Answer: {expected_answer}")
             print(f"Retrieved Answer: {actual_answer}")
@@ -210,6 +251,7 @@ if __name__ == "__main__":
             data["expected_answer"] = expected_answer
             data["actual_answer"] = actual_answer
             data["answer_similarity"] = answer_similarity_score
+            data["actual_context"] = "\n".join(context_list)
             data["context_precision"] = context_precision
             data["context_recall"] = context_recall
             data["faithfulness"] = faithfulness
@@ -221,15 +263,18 @@ if __name__ == "__main__":
         for data in evaluation_data:
             writer.writerow(data)
 
-        f1_score = (
-            2
-            * source_url_accuracy["true_positive"]
-            / (
-                2 * source_url_accuracy["true_positive"]
-                + source_url_accuracy["false_positive"]
-                + source_url_accuracy["false_negative"]
+        try:
+            f1_score = (
+                2
+                * source_url_accuracy["true_positive"]
+                / (
+                    2 * source_url_accuracy["true_positive"]
+                    + source_url_accuracy["false_positive"]
+                    + source_url_accuracy["false_negative"]
+                )
             )
-        )
+        except ZeroDivisionError:
+            f1_score = 0
         print(f"Total F1 Score: {f1_score}")
         print(f"Average Answer Similarity Score: {similarity_score_sum / total}")
         writer.writerow(
@@ -248,4 +293,5 @@ if __name__ == "__main__":
             }
         )
         csv_file.close()
+        print(f"Results are saved in {output_file_name}")
         print(cb)
