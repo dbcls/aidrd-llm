@@ -1,0 +1,14 @@
+fastapi==0.103.1
+uvicorn==0.23.2
+python-multipart==0.0.6
+aiohttp==3.8.5
+openai==1.70.0
+python-dotenv==1.0.0
+beautifulsoup4==4.12.2
+langchain==0.3.21
+pypdf==3.16.0
+httpx==0.24.1
+tenacity==8.2.3
+langchain_community==0.3.20
+langchain_openai==0.3.12
+debugpy
