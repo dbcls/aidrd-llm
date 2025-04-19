@@ -10,12 +10,14 @@ from pydantic import BaseModel, Field
 from dotenv import load_dotenv
 import uvicorn
 from bs4 import BeautifulSoup
-from langchain.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 
-from langchain_openai import AzureChatOpenAI
+from langchain_openai import AzureChatOpenAI, ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import ChatPromptTemplate
+from jinja2 import Environment, FileSystemLoader
+import traceback
 
 # Load environment variables
 load_dotenv(override=True)
@@ -29,11 +31,18 @@ logging.basicConfig(
 # Create a logger instance
 logger = logging.getLogger("app")
 
+template_dir = "templates"
+template_file = "report.jinja2"
+env = Environment(loader=FileSystemLoader(template_dir))
+report_template = env.get_template("report.jinja2")
+
+
 llm = AzureChatOpenAI(
     azure_deployment=os.environ["AZURE_OPENAI_MODEL"],
     temperature=0.7,
     max_tokens=2000,
 )
+
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -53,20 +62,33 @@ app.add_middleware(
 
 # Models
 class ApplicationData(BaseModel):
+    application_id: str = Field(..., description="ID of the application")
     dataset_id_list: List[str] = Field(..., description="List of dataset IDs in the application")
     related_studies_published: List[str] = Field(..., description="List of DOIs for related published studies")
-    research_abstract: str = Field(..., description="Abstract of the research using the requested data")
-    research_purpose: str = Field(..., description="Purpose of the requested data usage")
+    research_abstract: str = Field(..., description="Abstract of the research using the requested data in Japanese")
+    research_purpose: str = Field(..., description="Purpose of the requested data usage in Japanese")
 
 class DatasetInfo(BaseModel):
     research_url: str = Field(..., description="URL of the human dataset")
     dataset_id: str = Field(..., description="ID of the dataset")
+
+class DatasetAnalysisResult(BaseModel):
+    id: str = Field(..., description="ID of the dataset")
+    icd10: str = Field(..., description="ICD-10 code related to the dataset. If not available, it will be empty.")
+    purpose_similarity: bool = Field(..., description="Similarity of the dataset purpose to the research purpose")
+    paper_similarity: bool = Field(..., description="Similarity of the dataset paper to the research paper")
+    analysis_method_similarity: str = Field(..., description="Similarity of the analysis method to the research analysis")
+    analysis_method_similarity_reason: str = Field(..., description="Reason for the analysis method similarity")
+    analysis_method_details: str = Field(..., description="Details of the analysis method used in the research")
+    url: str = Field(..., description="URL of the dataset")
 
 class ResearchInfo(BaseModel):
     title: str = Field(..., description="Title of the research paper")
     doi: str = Field(..., description="DOI of the paper")
     authors: List[str] = Field(..., description="List of authors of the paper")
     abstract: str = Field(..., description="Abstract of the paper")
+    url: str = Field(..., description="URL of the paper")
+    icd10: str = Field(..., description="ICD-10 code related to the research. If not available, it will be empty.")
 
 class AssessmentResult(BaseModel):
     dataset_summary: List[Dict[str, Any]] = Field(..., description="Summary of the datasets")
@@ -115,10 +137,10 @@ async def extract_data_from_pdf(file_path: str) -> ApplicationData:
     
     # Extract data using OpenAI
     prompt = f"Extract the following information from this application form:\n\n{pdf_content}\n\n"
-    prompt += "1. List of dataset IDs mentioned in the application\n"
-    prompt += "2. List of DOIs for related published studies\n"
-    prompt += "3. Research abstract section\n"
-    prompt += "4. Research purpose section"
+    prompt += "1. Application ID\n"
+    prompt += "2. List of dataset IDs mentioned in the application\n"
+    prompt += "3. List of DOIs for related published studies\n"
+    prompt += "4. Research abstract section\n"
     
     return await extract_output_from_openai(prompt, ApplicationData)
 
@@ -156,15 +178,28 @@ async def get_research_info(doi: str, task_id: str = None) -> Optional[ResearchI
     authors = paper_info.get("authors", [])
     abstract = paper_info.get("abstract", "")
 
+    icd_10 = await suggest_icd10_code("""# タスク説明
+以下の論文情報をもとに、その論文に対応するICD-10コードを提案してください。
+特定の疾病に対して言及していない場合は、空文字列を返してください。
+
+# タイトル
+{title}
+                                      
+# 概要
+{abstract}                                
+""")
+
     research_info = ResearchInfo(
         title=title,
         doi=doi,
         authors=authors,
-        abstract=abstract
+        abstract=abstract,
+        url=paper_info.get("url", ""),
+        icd10=icd_10 if icd_10 else ""
     )
     return research_info
 
-async def summarize_dataset(url: str, task_id: str = None) -> str:
+async def analyze_dataset(url: str, dataset_ids: List[str],  purpose_icd10: str, analysis_method: str, task_id: str = None) -> DatasetAnalysisResult:
     """Summarize dataset information from its URL"""
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
@@ -173,56 +208,98 @@ async def summarize_dataset(url: str, task_id: str = None) -> str:
             
             html = await response.text()
             soup = BeautifulSoup(html, 'html.parser')
+
+            class DataSetSummary(BaseModel):
+                id: str = Field(..., description="ID of the dataset")
+                description: str = Field(..., description="Description of the dataset")
+                icd10_code: str = Field(..., description="ICD-10 code related to the dataset")
+
+            class ExtractionResult(BaseModel):
+                dataset_summaries: List[DataSetSummary] = Field(..., description="List of dataset summaries")
+                analysis_method: str = Field(..., description="Analysis method used in the research")
             
             # Summarize dataset using OpenAI
-            prompt = f"以下のデータセットの説明文からデータセットの要約を日本語で作成してください：\n\n{soup.get_text()}"
-            
-            system_message = """
-            データセットの説明文を与えるので、データセットの要約を日本語で作成してください。要約のフォーマットは以下を参考にしてください：
+            prompt = f"""# データセットIDのリスト
+{dataset_ids}
 
-            ◆hum0197.v18
-            ●BBJの日本人集団腸内細菌叢のメタゲノムシークエンスデータ
-            JGAS000205 / JGAD000290 / 95名
-            JGAS000260 / JGAD000363 / 103名
-            """
+# 研究の説明
+{soup.get_text()}"""
             
-            summary = await query_openai(prompt, system_message, task_id=task_id)
-            return summary
+            system_message = """データセットのIDのリストと研究の説明を与えるので、研究の説明から、データセットごとの内容説明と関連するICD10コード、研究において用いられた解析手法をまとめてください。"""
+            result = await extract_output_from_openai(prompt, ExtractionResult, system_message=system_message, task_id=task_id)
 
-async def assess_application(
-    dataset_summaries: List[Dict[str, Any]],
-    research_summaries: List[str],
+            class Simirarity(BaseModel):
+                analysis_method_similarity: str = Field(..., description="Similarity of the analysis method to the research analysis. One of '低', '中', '高'.")
+                analysis_method_similarity_reason: str = Field(..., description="Reason for the analysis method similarity.")
+            prompt = f"""# タスク説明
+今から行おうとしている研究の概要と、これまでに使用した解析手法を与えるので、どの程度その解析手法が研究内容に合致しているかを評価して「低」、「中」、「高」の3段階で評価してください。判断の理由も記載してください。
+
+# 行おうとしている研究の概要
+{analysis_method}
+
+# これまでに使用した解析手法
+{result.analysis_method}"""
+
+            similarity_result = await extract_output_from_openai(prompt, Simirarity, task_id=task_id)
+            dataset_analysis_result_list = []
+            if result:
+                for summary in result.dataset_summaries:
+
+                    dataset_analysis_result_list.append(DatasetAnalysisResult(
+                        id=summary.id,
+                        icd10=summary.icd10_code,
+                        purpose_similarity=check_similarity_of_icd10(purpose_icd10, summary.icd10_code),  # Placeholder
+                        paper_similarity=True,   
+                        analysis_method_details=result.analysis_method,
+                        analysis_method_similarity=similarity_result.analysis_method_similarity,
+                        analysis_method_similarity_reason=similarity_result.analysis_method_similarity_reason,
+                        url=url
+                    ))
+            else:
+                return None
+            return dataset_analysis_result_list
+
+async def suggest_icd10_code(prompt:str) -> str:
+    """Suggest ICD-10 code based on the prompt"""
+    class ICD10Suggestion(BaseModel):
+        icd10_code: str = Field(..., description="ICD-10 code suggested by OpenAI")
+        title: str = Field(..., description="Title of the ICD-10 code in Japanese")
+    
+    result = await extract_output_from_openai(prompt, ICD10Suggestion)
+    if result:
+        return f"{result.icd10_code} {result.title}"
+    return None
+
+
+async def create_assessment_report(
+    application_id: str,
+    abstract_icd10: str,
+    dataset_info_list: List[DatasetAnalysisResult],
+    research_info_list: List[ResearchInfo],
     research_abstract: str,
-    research_purpose: str,
     task_id: str = None
 ) -> str:
-    """Assess if the application meets the requirements"""
-    prompt = f"""
-    # 利用するデータセット情報の要約
-    {json.dumps(dataset_summaries, ensure_ascii=False, indent=2)}
+    """Create report to assess if the application meets the requirements"""
 
-    # 研究者のこれまでの研究の概要
-    {json.dumps(research_summaries, ensure_ascii=False, indent=2)}
 
-    # 利用を希望するデータを使用した研究の概要
-    {research_abstract}
+    # Prepare data for the template
+    template_data = {
+        "application_id": application_id,
+        "abstract": research_abstract,
+        "abstract_icd10": abstract_icd10,
+        "papers": research_info_list,
+        "datasets": dataset_info_list,
+    }
 
-    # 利用を希望するデータと利用目的
-    {research_purpose}
-    """
-    
-    system_message = """
-    # タスク説明
-    「利用するデータセット情報の要約」、「研究者のこれまでの研究の概要」、
-    「利用を希望するデータを使用した研究の概要」、「利用を希望するデータと利用目的」を参照して、
-    利用者が利用要件を満たしているかを判定し、根拠とともに回答してください。判定軸は以下のものとします。
+    # Render the template
+    report = report_template.render(template_data)
 
-    * データセットの扱う疾患と、研究者が扱ったことのある疾患の間の類似度
-    * サンプル内の分子データに記載されている解析手法と、研究者が扱ったことのある解析手法の間の類似度
-    """
-    
-    assessment = await query_openai(prompt, system_message, task_id=task_id)
-    return assessment
+    # Save the report to a file
+    report_path = f"results/{task_id}_report.md"
+    with open(report_path, "w", encoding="utf-8") as f:
+        f.write(report)
+
+    return report
 
 
 async def fetch_from_doi(doi: str) -> Optional[Dict[str, Any]]:
@@ -253,10 +330,19 @@ async def fetch_from_doi(doi: str) -> Optional[Dict[str, Any]]:
                 if not abstract:
                     abstract = await fetch_abstract_europepmc(doi)
 
+                url = ""
+                if "link" in data:
+                    for link in data["link"]:
+                        url = link.get("URL", "")
+                        if link.get("content-type") == "text/html": # HTMLリンクを優先
+                            break
+                        
+
                 return {
                     "title": title,
                     "authors": authors,
-                    "abstract": abstract
+                    "abstract": abstract,
+                    "url": url
                 }
             else:
                 logging.error(f"Error fetching DOI data: {resp.status}")
@@ -276,6 +362,19 @@ async def fetch_abstract_europepmc(doi: str) -> Optional[str]:
                 if records:
                     return records[0].get("abstractText")
             return None
+
+
+def check_similarity_of_icd10(a:str, b:str) -> bool:
+    """Check if two ICD-10 codes are similar"""
+    if b.startswith(a) or a.startswith(b): 
+        # どちらかがどちらかを含む場合は類似と判定
+        return True
+    if b[:-1] == a[:-1]:
+        # 末尾の1文字を除いて同じ場合は類似と判定
+        return True
+    return False
+    
+
 
 # Background task to process application
 async def process_application_task(
@@ -303,8 +402,16 @@ async def process_application_task(
         
         # Start logging
         task_logger.info("Starting application processing...")
+
+
+        abstract_icd10 = await suggest_icd10_code(f"""# タスク説明
+以下の研究概要をもとに、その研究概要に対応するICD-10コードを提案してください。
+
+# 研究概要
+{application_data.research_abstract}""")
+        task_logger.info(f"ICD-10 code suggested for abstract: {abstract_icd10}")
         
-        application_data.dataset_id_list = application_data.dataset_id_list[:1] # Limit to first dataset for testing
+        application_data.dataset_id_list = application_data.dataset_id_list[:5] # Limit to first dataset for testing
 
         # Get dataset information
         dataset_info_tasks = [get_dataset_info(dataset_id, task_id=task_id) for dataset_id in application_data.dataset_id_list]
@@ -320,11 +427,12 @@ async def process_application_task(
             dataset_mapping[info.research_url].append(info.dataset_id)
 
         # Get dataset summaries
-        dataset_summary_tasks = []
+        dataset_analysis_tasks = []
         for url, dataset_ids in dataset_mapping.items():
-            dataset_summary_tasks.append(summarize_dataset(url, task_id=task_id))
-        dataset_summaries = await asyncio.gather(*dataset_summary_tasks)
-        task_logger.info(f"Dataset summaries retrieved: {dataset_summaries}")
+            dataset_analysis_tasks.append(analyze_dataset(url, dataset_ids, abstract_icd10, application_data.research_abstract, task_id=task_id))
+        dataset_analysis_result = await asyncio.gather(*dataset_analysis_tasks)
+        dataset_analysis_result = [summary for sublist in dataset_analysis_result for summary in sublist] # Flatten the list
+        task_logger.info(f"Dataset analysis_result retrieved: {dataset_analysis_result}")
 
         # Get research information
         research_info_tasks = [get_research_info(doi, task_id=task_id) for doi in application_data.related_studies_published]
@@ -332,26 +440,19 @@ async def process_application_task(
         research_info_list = [ri for ri in research_info_results if ri]
         task_logger.info(f"Research information retrieved: {research_info_list}")
 
-        # Extract research abstracts
-        research_abstracts = [ri.abstract for ri in research_info_list if ri.abstract]
-
         # Assess application
-        assessment = await assess_application(
-            dataset_summaries,
-            research_abstracts,
-            application_data.research_abstract,
-            application_data.research_purpose,
+        assessment = await create_assessment_report(
+            application_data.application_id,
+            abstract_icd10,
+            dataset_analysis_result,
+            research_info_list,
+            research_abstract=application_data.research_abstract,
             task_id=task_id
         )
         task_logger.info(f"Assessment completed: {assessment}")
 
         # Store result
         result = {
-            "dataset_summary": [
-                {"research_url": url, "dataset_id_list": ids, "summary": summary}
-                for (url, ids), summary in zip(dataset_mapping.items(), dataset_summaries)
-            ],
-            "related_studies": research_abstracts,
             "assessment": assessment
         }
 
@@ -366,17 +467,16 @@ async def process_application_task(
 
     except Exception as e:
         # Log error
-        error_message = f"Error processing application: {e}"
-        print(error_message)
+        error_stacktrace = traceback.format_exc()
         with open(f"results/{task_id}_error.txt", "w", encoding="utf-8") as f:
-            f.write(str(e))
+            f.write(error_stacktrace)
         if 'task_logger' in locals():
-            task_logger.error(error_message)
+            task_logger.error(error_stacktrace)
             if 'file_handler' in locals():
                 task_logger.removeHandler(file_handler)
                 file_handler.close()
         else:
-            logger.error(error_message)
+            logger.error(error_stacktrace)
 
 # API Endpoints
 @app.post("/api/applications", status_code=202)
