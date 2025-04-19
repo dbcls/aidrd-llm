@@ -70,7 +70,7 @@ async def extract_output_from_openai(
 
 async def suggest_icd10_code(prompt: str, task_id: str = None) -> str:
     """Suggest ICD-10 code based on the prompt"""
-    from models import ICD10Suggestion
+    from src.models import ICD10Suggestion
 
     result = await extract_output_from_openai(prompt, ICD10Suggestion, task_id=task_id)
     if result:

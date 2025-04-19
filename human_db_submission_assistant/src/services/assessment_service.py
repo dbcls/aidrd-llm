@@ -2,7 +2,7 @@ import os
 import logging
 from typing import List
 from jinja2 import Environment, FileSystemLoader
-from models import DatasetAnalysisResult, ResearchInfo
+from src.models import DatasetAnalysisResult, ResearchInfo
 
 logger = logging.getLogger("assessment_service")
 

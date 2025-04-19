@@ -3,8 +3,8 @@ import aiohttp
 import logging
 from typing import Dict, Any, Optional, List
 
-from models import ResearchInfo
-from services.llm_service import suggest_icd10_code
+from src.models import ResearchInfo
+from src.services.llm_service import suggest_icd10_code
 
 logger = logging.getLogger("research_service")
 

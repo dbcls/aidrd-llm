@@ -6,9 +6,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import uvicorn
 
-from models import ApplicationData
-from tasks import process_application_task
-from utils import extract_data_from_pdf
+from src.models import ApplicationData
+from src.tasks import process_application_task
+from src.utils import extract_data_from_pdf
 
 # Load environment variables
 load_dotenv(override=True)
