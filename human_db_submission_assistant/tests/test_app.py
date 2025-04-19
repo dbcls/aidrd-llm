@@ -7,6 +7,10 @@ import pytest
 from fastapi.testclient import TestClient
 from pydantic import BaseModel
 
+# Import app modules with appropriate paths
+import sys
+from pathlib import Path
+
 # アプリとモジュールのインポート
 from src.app import app
 from src.models import (
