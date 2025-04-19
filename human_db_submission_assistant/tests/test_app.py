@@ -12,8 +12,8 @@ import sys
 from pathlib import Path
 
 # アプリとモジュールのインポート
-from src.app import app
-from src.models import (
+from app import app
+from models import (
     ApplicationData,
     DatasetInfo,
     DatasetAnalysisResult,
@@ -22,23 +22,23 @@ from src.models import (
     Similarity,
     ICD10Suggestion,
 )
-from src.services.llm_service import (
+from services.llm_service import (
     query_openai,
     extract_output_from_openai,
     suggest_icd10_code,
 )
-from src.services.dataset_service import (
+from services.dataset_service import (
     get_dataset_info,
     analyze_dataset,
     check_similarity_of_icd10,
 )
-from src.services.research_service import (
+from services.research_service import (
     get_research_info,
     fetch_from_doi,
     fetch_abstract_europepmc,
 )
-from src.services.assessment_service import create_assessment_report
-from src.utils import extract_data_from_pdf
+from services.assessment_service import create_assessment_report
+from utils import extract_data_from_pdf
 
 # テストクライアントの作成
 client = TestClient(app)

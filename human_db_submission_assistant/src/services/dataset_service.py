@@ -3,14 +3,14 @@ import logging
 from typing import List, Optional
 from bs4 import BeautifulSoup
 
-from src.models import (
+from models import (
     DatasetInfo,
     DatasetAnalysisResult,
     DatasetUrlExtractionResult,
     DatasetExtractionResult,
     Similarity,
 )
-from src.services.llm_service import extract_output_from_openai
+from services.llm_service import extract_output_from_openai
 
 logger = logging.getLogger("dataset_service")
 

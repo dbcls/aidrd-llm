@@ -6,11 +6,11 @@ import traceback
 from typing import List
 from fastapi import BackgroundTasks
 
-from src.models import ApplicationData, DatasetAnalysisResult, ResearchInfo
-from src.services.llm_service import suggest_icd10_code
-from src.services.dataset_service import get_dataset_info, analyze_dataset
-from src.services.research_service import get_research_info
-from src.services.assessment_service import create_assessment_report
+from models import ApplicationData, DatasetAnalysisResult, ResearchInfo
+from services.llm_service import suggest_icd10_code
+from services.dataset_service import get_dataset_info, analyze_dataset
+from services.research_service import get_research_info
+from services.assessment_service import create_assessment_report
 
 
 async def process_application_task(

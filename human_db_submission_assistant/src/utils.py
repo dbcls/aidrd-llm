@@ -1,7 +1,7 @@
 import logging
 from langchain_community.document_loaders import PyPDFLoader
-from src.models import ApplicationData
-from src.services.llm_service import extract_output_from_openai
+from models import ApplicationData
+from services.llm_service import extract_output_from_openai
 
 logger = logging.getLogger("pdf_utils")
 
