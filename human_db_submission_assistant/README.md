@@ -25,45 +25,18 @@ FastAPI implementation of the Human Database Submission Assistant workflow, whic
 
 ## API Endpoints
 
-### Submit Application
-```
-POST /api/applications
-```
-Upload a PDF application form for processing.
+See http://localhost:8000/docs for details on available endpoints.
 
-### Check Application Status
-```
-GET /api/applications/{task_id}
-```
-Check the status or result of a submitted application.
+## Testing
 
-## Workflow
+- First, install the required dependencies for development and testing:
 
-1. Application form is uploaded and processed to extract:
-   - Dataset IDs
-   - Related research DOIs
-   - Research abstract
-   - Research purpose
+  ```
+  pip install -r requirements-dev.txt
+  ```
 
-2. For each dataset ID:
-   - Search HumanDBS website
-   - Extract dataset information
-   - Generate summary
+- To run the tests, use the following command:
 
-3. For each research DOI:
-   - Query CrossRef API
-   - Extract publication details
-   - Process research abstracts
-
-4. Assessment:
-   - Compare dataset characteristics with researcher's expertise
-   - Evaluate compatibility between research purpose and requested data
-   - Generate recommendation
-
-## Architecture
-
-The system uses:
-- FastAPI for the web server
-- Azure OpenAI for document understanding and evaluation
-- Asynchronous processing for handling multiple requests
-- Background tasks for long-running operations
+  ```
+  docker compose exec api pytest test_app.py::TestAPIEndpoints::test_submit_application -v
+  ```
