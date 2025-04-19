@@ -7,25 +7,34 @@ import pytest
 from fastapi.testclient import TestClient
 from pydantic import BaseModel
 
-# Import the app and functions to test
-from app import (
-    app,
-    check_similarity_of_icd10,
-    query_openai,
-    extract_output_from_openai,
-    extract_data_from_pdf,
-    get_dataset_info,
-    get_research_info,
-    analyze_dataset,
-    suggest_icd10_code,
-    create_assessment_report,
-    fetch_from_doi,
-    fetch_abstract_europepmc,
+# アプリとモジュールのインポート
+from app import app
+from models import (
     ApplicationData,
     DatasetInfo,
     DatasetAnalysisResult,
     ResearchInfo,
+    DatasetUrlExtractionResult,
+    Similarity,
+    ICD10Suggestion,
 )
+from services.llm_service import (
+    query_openai,
+    extract_output_from_openai,
+    suggest_icd10_code,
+)
+from services.dataset_service import (
+    get_dataset_info,
+    analyze_dataset,
+    check_similarity_of_icd10,
+)
+from services.research_service import (
+    get_research_info,
+    fetch_from_doi,
+    fetch_abstract_europepmc,
+)
+from services.assessment_service import create_assessment_report
+from utils import extract_data_from_pdf
 
 # テストクライアントの作成
 client = TestClient(app)
@@ -55,7 +64,7 @@ class TestHelperFunctions(unittest.TestCase):
 class TestOpenAIFunctions:
     """OpenAI APIを使う関数のテストクラス"""
 
-    @patch("app.llm")
+    @patch("services.llm_service.llm")
     async def test_query_openai(self, mock_llm):
         """query_openai関数のテスト"""
         # モックの戻り値を設定
@@ -72,7 +81,7 @@ class TestOpenAIFunctions:
         assert result == "テスト応答"
         mock_llm.invoke.assert_called_once()
 
-    @patch("app.llm")
+    @patch("services.llm_service.llm")
     async def test_extract_output_from_openai(self, mock_llm):
         """extract_output_from_openai関数のテスト"""
 
@@ -98,7 +107,7 @@ class TestOpenAIFunctions:
         assert result.test_field == "テスト出力"
         mock_llm.with_structured_output.assert_called_once_with(TestOutputModel)
 
-    @patch("app.llm")
+    @patch("services.llm_service.llm")
     async def test_suggest_icd10_code(self, mock_llm):
         """suggest_icd10_code関数のテスト"""
         # モックの戻り値を設定
@@ -118,8 +127,8 @@ class TestOpenAIFunctions:
 class TestDataProcessingFunctions:
     """データ処理関数のテストクラス"""
 
-    @patch("app.PyPDFLoader")
-    @patch("app.extract_output_from_openai")
+    @patch("utils.PyPDFLoader")
+    @patch("utils.extract_output_from_openai")
     async def test_extract_data_from_pdf(self, mock_extract_output, mock_pdf_loader):
         """PDFからのデータ抽出関数のテスト"""
         # モックの戻り値を設定
@@ -145,7 +154,7 @@ class TestDataProcessingFunctions:
         mock_extract_output.assert_called_once()
 
     @patch("aiohttp.ClientSession.get")
-    @patch("app.extract_output_from_openai")
+    @patch("services.dataset_service.extract_output_from_openai")
     async def test_get_dataset_info_success(self, mock_extract_output, mock_get):
         """get_dataset_info関数の成功ケースのテスト"""
         # モックの戻り値を設定
@@ -168,7 +177,7 @@ class TestDataProcessingFunctions:
         assert result.dataset_id == "DS001"
 
     @patch("aiohttp.ClientSession.get")
-    @patch("app.extract_output_from_openai")
+    @patch("services.dataset_service.extract_output_from_openai")
     async def test_get_dataset_info_failure(self, mock_extract_output, mock_get):
         """get_dataset_info関数の失敗ケースのテスト"""
         # モックの戻り値を設定 - HTTPステータスが失敗
@@ -183,8 +192,8 @@ class TestDataProcessingFunctions:
         assert result is None
         mock_extract_output.assert_not_called()
 
-    @patch("app.fetch_from_doi")
-    @patch("app.suggest_icd10_code")
+    @patch("services.research_service.fetch_from_doi")
+    @patch("services.research_service.suggest_icd10_code")
     async def test_get_research_info(self, mock_suggest_icd10, mock_fetch_from_doi):
         """get_research_info関数のテスト"""
         # モックの戻り値を設定
@@ -261,7 +270,7 @@ class TestDataProcessingFunctions:
         assert result == "テスト概要 from EuropePMC"
 
     @patch("aiohttp.ClientSession.get")
-    @patch("app.extract_output_from_openai")
+    @patch("services.dataset_service.extract_output_from_openai")
     async def test_analyze_dataset(self, mock_extract_output, mock_get):
         """analyze_dataset関数のテスト"""
         # モックの戻り値を設定
@@ -323,7 +332,7 @@ class TestDataProcessingFunctions:
 class TestReportGeneration:
     """レポート生成関数のテストクラス"""
 
-    @patch("app.report_template")
+    @patch("services.assessment_service.report_template")
     @patch("builtins.open", new_callable=mock_open)
     async def test_create_assessment_report(self, mock_file, mock_template):
         """create_assessment_report関数のテスト"""
