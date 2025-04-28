@@ -40,13 +40,13 @@ docker-compose up -d
   - Note that you should execute this command outside the docker container to access the local firecrawl endpoint.
 
 ```
-python crawl_knowledges.py <URL_TO_START_CRAWLING> <OUTPUT_FILE_NAME> --max-page-count <MAX_PAGE_COUNT> --max-depth <MAX_DEPTH>
+python bin/crawl_knowledges.py <URL_TO_START_CRAWLING> <OUTPUT_FILE_NAME> --max-page-count <MAX_PAGE_COUNT> --max-depth <MAX_DEPTH>
 ```
 
 - For example:
 
 ```
-python crawl_knowledges.py "https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/" tokyo.json --max-page-count 1000 --max-depth 5
+python bin/crawl_knowledges.py "https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal/" tokyo.json --max-page-count 1000 --max-depth 5
 ```
 
 - The crawled documents will be saved in `tokyo.json` and PDFs are saved in `downloaded_pdfs` directory.
@@ -54,7 +54,7 @@ python crawl_knowledges.py "https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanby
 If you want to crawl all prefectures at once, you can use the following command:
 
 ```
-python crawl_all_prefectures.py
+python bin/crawl_all_prefectures.py
 ```
 
 ## Upload knowledge base to Dify
@@ -73,7 +73,7 @@ API_BASE_URL=<DIFY_BASE_URL> # e.g. http://aidrd.japaneast.cloudapp.azure.com/v1
 
 ```
 
-python upload_knowledge.py <CRAWLED_KNOWLEDGE_FILE> <KNOWLEDGE_BASE_NAME>
+python bin/upload_knowledge.py <CRAWLED_KNOWLEDGE_FILE> <KNOWLEDGE_BASE_NAME>
 
 ```
 
@@ -81,14 +81,14 @@ python upload_knowledge.py <CRAWLED_KNOWLEDGE_FILE> <KNOWLEDGE_BASE_NAME>
 
 ```
 
-python upload_knowledge.py tokyo.json tokyo-knowledges
+python bin/upload_knowledge.py tokyo.json tokyo-knowledges
 
 ```
 
 - If you want to upload all prefectures at once, you can use the following command:
 
 ```
-python upload_all_prefectures.py
+python bin/upload_all_prefectures.py
 ```
 
 - After upload, please execute the following SQL query to remove the suffix `.added_on_upload.html` from the document names.
@@ -128,23 +128,29 @@ docker-compose restart
   - The evaluation data should be CSV or JSON. The required fields are `query`, `expected_answer`. The optional field is `source_url_list`.
 
 ```
-docker-compose exec app python evaluation.py <path_to_your_evaluation_data>
+docker-compose exec app python bin/evaluation.py <path_to_your_evaluation_data>
 ```
 
 - The evaluation results will be located in `evaluation_results_<timestamp>.json`
 
 ## Test data generation
 
-- To create test data for the evaluation from a document automatically, run the following command :
+- To create test data for the evaluation from a JSON file contains knowledge automatically, run the following command :
 
 ```
-docker compose exec app python generate_test_data.py <path_to_your_document> -o <output_file_name>
+docker compose exec app python bin/generate_test_data.py -j <path_to_your_knowledge_json> -o <output_file_name>
+```
+
+- If you want to use the direct files instead of the JSON file, you can use the following command:
+
+```
+docker compose exec app python bin/generate_test_data.py --files <path_to_your_knowledge_directory> -o <output_file_name>
 ```
 
 - If you want to generate test data in Japanese, add `--use_japanese` option.
 
 ```
-docker compose exec app python generate_test_data.py --use_japanese <path_to_your_document> -o <output_file_name>
+docker compose exec app python bin/generate_test_data.py --use_japanese -j <path_to_your_knowledge_json> -o <output_file_name>
 ```
 
 ## Known problems and solutions

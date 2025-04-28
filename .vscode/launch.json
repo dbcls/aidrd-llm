@@ -1,0 +1,36 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python Debugger: generate_test_data",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "bin/generate_test_data.py",
+            "args": [
+                "downloaded_pdfs/難病医療費助成について - 保健福祉部健康安全局地域保健課.pdf"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        },
+        {
+            "name": "Crawl",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "bin/crawl_knowledges.py",
+            "args": [
+                "https://www.hokeniryo.metro.tokyo.lg.jp/kenkou/nanbyo/portal",
+                "tokyo.json",
+                "--max-page-count",
+                "100",
+                "--max-depth",
+                "3",
+                "--allow-backward-crawling"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": false
+        }
+    ]
+}
