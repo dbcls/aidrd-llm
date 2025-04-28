@@ -53,7 +53,7 @@ const DocumentList = () => {
                 setDocuments(documentList)
             }
 
-            const portalCsv = await fetch("/prefecture_portal_url.csv")
+            const portalCsv = await fetch("/data/prefecture_portal_url.csv")
             const portalCsvText = await portalCsv.text()
             const results = Papa.parse(portalCsvText, { header: true });
             const portalDict: Record<string, any> = {}
