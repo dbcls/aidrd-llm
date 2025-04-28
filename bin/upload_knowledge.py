@@ -1,5 +1,4 @@
 # A script to upload knowledge in given json file to the remote Dify server.
-# Script to evaluate the accuracy of retrieval using dataset in evaluation_data.json
 
 import json
 import requests

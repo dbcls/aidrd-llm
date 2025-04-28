@@ -128,7 +128,7 @@ docker-compose restart
   - The evaluation data should be CSV or JSON. The required fields are `query`, `expected_answer`. The optional field is `source_url_list`.
 
 ```
-docker-compose exec app python bin/evaluation.py <path_to_your_evaluation_data>
+docker-compose exec app python bin/evaluation.py data/evaluation_data.json
 ```
 
 - The evaluation results will be located in `evaluation_results_<timestamp>.json`

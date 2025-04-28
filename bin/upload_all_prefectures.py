@@ -5,7 +5,7 @@ import os
 
 
 def upload_all_prefectures():
-    with open("prefecture_portal_url.csv", "r") as f:
+    with open("data/prefecture_portal_url.csv", "r") as f:
         reader = csv.reader(f)
         next(reader)  # Skip the header
         for row in reader:
